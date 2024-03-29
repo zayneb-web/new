@@ -23,8 +23,7 @@ const Conversation = ({ data, currentUser }) => {
 
     if (user && data) {
       fetchUserData();
-      console.log("userss", user);
-      console.log("datas", data);
+ 
     }
   }, [data, currentUser, user]);
 
