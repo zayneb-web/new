@@ -20,7 +20,7 @@ function Chat() {
     const [notifications, setNotifications] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
-
+    const [onlineUsers, setOnlineUsers] = useState([]);
   const socket = useRef(null);
 
   useEffect(() => {
@@ -44,6 +44,7 @@ function Chat() {
 
     socket.current.on("get-users", (users) => {
       console.log("users", users);
+      setOnlineUsers(users);
     });
     socket.current.on('notification', (message) => {
       // Update the notification state with the new notification
@@ -120,6 +121,11 @@ function Chat() {
     }
   };
 
+  const checkOnlineStatus = (chat) => {
+    const chatMember = chat.members.find((member) => member !== user._id);
+    const online = onlineUsers.find((user) => user.userId === chatMember);
+    return online ? true : false;
+  };
 
   
 
@@ -163,7 +169,8 @@ function Chat() {
           dispatch(setCurrentChat(chat)); 
         }}
       >
-        <Conversation data={chat} currentUser={user._id} /> 
+        <Conversation data={chat} currentUser={user._id} 
+         online={checkOnlineStatus(chat)}/> 
       </div>
     ))}
   </div>
