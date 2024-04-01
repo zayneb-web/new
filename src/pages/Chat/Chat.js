@@ -125,9 +125,9 @@ function Chat() {
 
   return (
     <>
+      <TopBar />
       <div className='w-full px-0 lg:px-10 pb-20 2xl:px-40 bg-bgColor lg:rounded-lg h-screen overflow-hidden'>
-        <TopBar 
-         />
+      
         <div className="app ">
           <div className="header">
             <div className="logo">
