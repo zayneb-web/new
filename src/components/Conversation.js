@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { getUserInfo } from "../utils/api";
 import { useSelector ,useDispatch} from "react-redux";
-
+import { createChat } from "../utils/api";
 
 const Conversation = ({ data, currentUser }) => {
   const dispatch = useDispatch();
@@ -27,9 +27,23 @@ const Conversation = ({ data, currentUser }) => {
     }
   }, [data, currentUser, user]);
 
+  // Function to handle user selection and create a chat
+  const handleUserSelection = async () => {
+    setLoading(true);
+    try {
+      // Create a chat with the selected user
+      await createChat({ members: [user._id, userData._id] }, user.token);
+      //dispatch(setCurrentChat(chat));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       <div className="conversation-area ">
+        
       <div className="msg online  " >
         <img
           className="msg-profile"
