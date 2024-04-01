@@ -9,6 +9,7 @@ import { BsMoon, BsSunFill } from "react-icons/bs";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { SetTheme } from "../redux/theme";
 import { Logout } from "../redux/userSlice";
+import { logo } from "../assets";
 
 const TopBar = () => {
   const { theme } = useSelector((state) => state.theme);
@@ -28,13 +29,17 @@ const TopBar = () => {
   const handleSearch = async (data) => {};
 
   return (
-    <div className='topbar w-full flex items-center justify-between py-3 md:py-6 px-4 bg-primary'>
+    <div className='topbar w-full flex items-center justify-between py-3 md:py- px-4 bg-primary'>
       <Link to='/' className='flex gap-2 items-center'>
-        <div className='p-1 md:p-2 bg-[#F76566] rounded text-white'>
-          <TbSocial />
+        <div className='p-1 md:p-2  rounded text-white'>
+        <img
+              src={logo}
+              alt='Bg Image'
+              className='w-14 h-14 object-cover rounded'
+            />
         </div>
-        <span className='text-xl md:text-2xl text-[#F76566] font-semibold'>
-          Better Call Us
+        <span className='text-xl md:text-2xl text-[#D00000] font-bold'>
+          ESPRIT
         </span>
       </Link>
 
@@ -50,12 +55,12 @@ const TopBar = () => {
         <CustomButton
           title='Search'
           type='submit'
-          containerStyles='bg-[#F76566] text-white px-6 py-2.5 mt-2 rounded-r-full'
+          containerStyles='bg-[#D00000] text-white px-6 py-2.5 mt-2 rounded-r-full'
         />
       </form>
 
       {/* ICONS */}
-      <div className='flex gap-4 items-center text-ascent-1 text-md md:text-xl'>
+      <div className='flex gap-4 items-center text-ascent-1 text-md md:text-xl '>
         <button onClick={() => handleTheme()}>
           {theme ? <BsMoon /> : <BsSunFill />}
         </button>
@@ -67,7 +72,7 @@ const TopBar = () => {
           <CustomButton
             onClick={() => dispatch(Logout())}
             title='Log Out'
-            containerStyles='text-sm text-ascent-1 px-4 md:px-6 py-1 md:py-2 border border-[#666] rounded-full bg-[#F76566]'
+            containerStyles='text-sm text-white px-4 md:px-6 py-1 md:py-2 rounded-full bg-[#D00000]'
           />
         </div>
       </div>

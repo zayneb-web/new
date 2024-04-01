@@ -10,23 +10,53 @@ import Loading from "../components/Loading";
 import CustomButton from "../components/CustomButton";
 import { BgImage } from "../assets";
 import TextInput from "../components/TextInput"
-
+import {apiRequest} from "../utils/api"
 
 const Register = () => {
+  
+  const [errMsg, setErrMsg] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
-    getValues,  
+    getValues,
     formState: { errors },
   } = useForm({
     mode: "onChange",
   });
 
-  const onSubmit = async (data) => {};
+  const onSubmit = async (data) => {
 
-  const [errMsg, setErrMsg] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const dispatch = useDispatch();
+    setIsSubmitting(true);
+
+    try{
+      const res= await apiRequest({
+
+
+          url: "/auth/register",
+          data:data,
+          method:"POST"
+        });
+        if(res?.status==="failed"){
+          setErrMsg(res);
+        }else {
+          setErrMsg(res);
+          setInterval(()=>{
+            window.location.replace("/login"); },3000);
+          
+        }
+        setIsSubmitting(false);
+
+
+
+    }catch(error){
+      console.log(error)
+      setIsSubmitting(false);
+
+    }
+  };
+
 
   return (
     <div className='bg-bgColor w-full h-[100vh] flex items-center justify-center p-6'>
@@ -34,11 +64,11 @@ const Register = () => {
         {/* LEFT */}
         <div className='w-full lg:w-1/2 h-full p-10 2xl:px-20 flex flex-col justify-center '>
           <div className='w-full flex gap-2 items-center mb-6'>
-            <div className='p-2 bg-[#F76566] rounded text-white'>
+            <div className='p-2 bg-[#d80668] rounded text-white'>
               <TbSocial />
             </div>
-            <span className='text-2xl text-[#F76566] ' font-semibold>
-            Better Call Us
+            <span className='text-2xl text-[#d8066f] font-semibold' >
+              BETTER CALL US
             </span>
           </div>
 
@@ -74,6 +104,17 @@ const Register = () => {
                 error={errors.lastName ? errors.lastName?.message : ""}
               />
             </div>
+            <TextInput
+              name='profession'
+              placeholder='profession'
+              label='Your Profession'
+              type='profession'
+              register={register("profession", {
+                required: "profession is required",
+              })}
+              styles='w-full'
+              error={errors.profession ? errors.profession.message : ""}
+            />
 
             <TextInput
               name='email'
@@ -139,7 +180,7 @@ const Register = () => {
             ) : (
               <CustomButton
                 type='submit'
-                containerStyles={`inline-flex justify-center rounded-md bg-[#F76566] px-8 py-3 text-sm font-medium text-white outline-none`}
+                containerStyles={`inline-flex justify-center rounded-md bg-blue px-8 py-3 text-sm font-medium text-white outline-none`}
                 title='Create Account'
               />
             )}
@@ -149,14 +190,14 @@ const Register = () => {
             Already has an account?{" "}
             <Link
               to='/login'
-              className=' text-[#F76566] font-semibold ml-2 cursor-pointer'
+              className='text-[#065ad8] font-semibold ml-2 cursor-pointer'
             >
               Login
             </Link>
           </p>
         </div>
         {/* RIGHT */}
-        <div className='hidden w-1/2 h-full lg:flex flex-col items-center justify-center bg-[#F76566]'>
+        <div className='hidden w-1/2 h-full lg:flex flex-col items-center justify-center bg-customColor'>
           <div className='relative w-full flex items-center justify-center'>
             <img
               src={BgImage}
@@ -182,10 +223,10 @@ const Register = () => {
 
           <div className='mt-16 text-center'>
             <p className='text-white text-base'>
-              Connect & have share for fun
+              Connect with friedns & have share for fun
             </p>
             <span className='text-sm text-white/80'>
-              Share memories with educators and the world.
+              Share memories with friends and the world.
             </span>
           </div>
         </div>
@@ -193,5 +234,4 @@ const Register = () => {
     </div>
   );
 };
-
 export default Register;

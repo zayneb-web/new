@@ -10,8 +10,14 @@ import TextInput from "../components/TextInput"
 import { BgImage } from "../assets";
 import Loading from "../components/Loading";
 import CustomButton from "../components/CustomButton"
+import { apiRequest } from "../utils/api";
+import { UserLogin } from "../redux/userSlice";
 
 const Login = () => {
+  
+  const [errMsg, setErrMsg] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -20,29 +26,55 @@ const Login = () => {
     mode: "onChange",
   });
 
-  const onSubmit = async (data) => {};
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
 
-  const [errMsg, setErrMsg] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const dispatch = useDispatch();
+    try {
+
+         const res= await apiRequest({
+
+          url: "/auth/login",
+          data:data,
+          method:"POST"
+         });
+         if(res?.status==="failed"){
+          setErrMsg(res);
+        }else {
+          setErrMsg("");
+         const newData= {token: res?.token, ...res?.user};
+         dispatch(UserLogin(newData));
+         window.location.replace("/")
+          
+        }
+        setIsSubmitting(false);
+
+
+    }catch(error){
+      console.log(error)
+      setIsSubmitting(false);
+
+    }
+
+  };
+
   return (
     <div className='bg-bgColor w-full h-[100vh] flex items-center justify-center p-6'>
       <div className='w-full md:w-2/3 h-fit lg:h-full 2xl:h-5/6 py-8 lg:py-0 flex bg-primary rounded-xl overflow-hidden shadow-xl'>
         {/* LEFT */}
         <div className='w-full lg:w-1/2 h-full p-10 2xl:px-20 flex flex-col justify-center '>
           <div className='w-full flex gap-2 items-center mb-6'>
-            <div className='p-2 bg-[#F76566] rounded text-white'>
+            <div className='p-2 bg-[#d80668] rounded text-white'>
               <TbSocial />
             </div>
-            <span className='text-2xl text-[#F76566] font-semibold text-center'>
-            Better Call Us
+            <span className='text-2xl text-[#d8066f] font-semibold'>
+              BETTER CALL US
             </span>
           </div>
-          
-          <p className='text-ascent-1 text-base font-semibold text-center'>
+
+          <p className='text-ascent-1 text-base font-semibold'>
             Log in to your account
           </p>
-          <span className='text-sm mt-2 text-ascent-2 text-center'>Welcome back</span>
+          <span className='text-sm mt-2 text-ascent-2'>Welcome back</span>
 
           <form
             className='py-8 flex flex-col gap-5='
@@ -73,9 +105,10 @@ const Login = () => {
               })}
               error={errors.password ? errors.password?.message : ""}
             />
+
             <Link
               to='/reset-password'
-              className='text-sm text-right text-[#FDE0DF] font-semibold'
+              className='text-sm text-right text-blue font-semibold'
             >
               Forgot Password ?
             </Link>
@@ -91,30 +124,30 @@ const Login = () => {
                 {errMsg?.message}
               </span>
             )}
-             {isSubmitting ? (
+
+            {isSubmitting ? (
               <Loading />
             ) : (
               <CustomButton
                 type='submit'
-                containerStyles={`inline-flex justify-center rounded-md bg-[#F76566] px-8 py-3 text-sm font-medium text-white outline-none`}
+                containerStyles={`inline-flex justify-center rounded-md bg-blue px-8 py-3 text-sm font-medium text-white outline-none`}
                 title='Login'
               />
             )}
-            
           </form>
 
           <p className='text-ascent-2 text-sm text-center'>
             Don't have an account?
             <Link
               to='/register'
-              className='text-[#F76566] font-semibold ml-2 cursor-pointer'
+              className='text-[#d80650] font-semibold ml-2 cursor-pointer'
             >
               Create Account
             </Link>
           </p>
         </div>
         {/* RIGHT */}
-        <div className='hidden w-1/2 h-full lg:flex flex-col items-center justify-center bg-[#F76566]'>
+        <div className='hidden w-1/2 h-full lg:flex flex-col items-center justify-center bg-customColor'>
           <div className='relative w-full flex items-center justify-center'>
             <img
               src={BgImage}
@@ -131,6 +164,7 @@ const Login = () => {
               <ImConnection />
               <span className='text-xs font-medium'>Connect</span>
             </div>
+
             <div className='absolute flex items-center gap-1 bg-white left-12 bottom-6 py-2 px-5 rounded-full'>
               <AiOutlineInteraction />
               <span className='text-xs font-medium'>Interact</span>
@@ -150,5 +184,4 @@ const Login = () => {
     </div>
   );
 };
-
 export default Login;
