@@ -1,0 +1,7 @@
+.stories {
+    display: flex;
+    margin: 10px;
+    max-width: 100%; /* Change max-width to 100% */
+    overflow: hidden;
+    padding: 10px 0;
+  }
