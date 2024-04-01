@@ -4,9 +4,10 @@
 
 
 ::-webkit-scrollbar {
-  display: none;
+ 
    -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;
+  
 }
 
 .topbar{
@@ -75,6 +76,8 @@ z-index: 49;
     --color-bg: 227 227 227;
     --color-primary: 255 255 255;
     --color-secondary:255 255 255;
+   
+
     --color-ascent1: 0 0 0;
     --color-ascent2: 89 91 100;
     --color-blue: 6 90 216;
@@ -86,10 +89,57 @@ z-index: 49;
      --color-bg: 12 12 12;
      --color-primary: 31 31 31;
     --color-secondary: 47 45 48;
+    --color-secondary-light: 66 66 66;
     --color-ascent1: 255 255 255;
     --color-ascent2: 164 161 162;
     --color-blue: 6 90 216;
     /* //16 176 255; */
     --color-white: 255 255 255;
+
+      --body-bg-color: #1d1d1d;
+      --theme-bg-color: #27292d;
+      --border-color: #323336;
+      --body-color: #d1d1d2;
+      --active-conversation-bg: linear-gradient(
+       to right,
+       rgba(47, 50, 56, 0.54),
+       rgba(238, 242, 244, 0) 100%
+      );
+      --msg-hover-bg: rgba(47, 50, 56, 0.54);
+      --chat-text-bg: #383b40;
+      --chat-text-color: #b5b7ba;
+      --msg-date: #626466;
+      --msg-message: var(--msg-date);
+      --overlay-bg: linear-gradient(
+       to bottom,
+       rgba(0, 0, 0, 0) 0%,
+       #27292d 65%,
+       #27292d 100%
+      );
+      --input-bg: #2f3236;
+      --chat-header-bg: linear-gradient(
+       to bottom,
+       #27292d 0%,
+       #27292d 78%,
+       rgba(255, 255, 255, 0) 100%
+      );
+      --settings-icon-color: #7c7e80;
+      --developer-color: var(--border-color);
+      --button-bg-color: #393b40;
+      --button-color: var(--body-color);
+      --input-chat-color: #6f7073;
+      --detail-font-color: var(--input-chat-color);
+     
   }
+  
+/* Add custom colors */
+.bg-gray-800 {
+  background-color: #f82e2e; /* Dark Gray */
+}
+
+
+
+.hover\:bg-bgColor:hover {
+  background-color: var(--color-bg); /* Custom background color */
+}
 }
