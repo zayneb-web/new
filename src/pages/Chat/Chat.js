@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import "./chat.css";
-import { getUserChats } from "../../utils/api";
+import { getUserChats ,createChat ,searchUsers} from "../../utils/api";
 import { useSelector, useDispatch } from "react-redux";
 import Conversation from "../../components/Conversation";
 import { ChatBox } from "../../components/ChatBox/ChatBox";
@@ -18,6 +18,9 @@ function Chat() {
   const [receivedMessage, setReceivedMessage] = useState(null);
     const [loading, setLoading] = useState(false);
     const [notifications, setNotifications] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+
   const socket = useRef(null);
 
   useEffect(() => {
@@ -35,7 +38,7 @@ function Chat() {
         }
       }
     };
-    socket.current = io("http://localhost:3001", socketOptions);
+    socket.current = io("http://localhost:5000", socketOptions);
 
     socket.current.emit("new-user-add", user._id);
 
@@ -104,6 +107,21 @@ function Chat() {
       getChats();
     }
   }, [user._id, user.token]);
+  const handleUserSelection = async (selectedUserId) => {
+    setLoading(true);
+    try {
+      // Create a chat with the selected user
+      const chat = await createChat({ senderId: user._id, receiverId: selectedUserId }, user.token);
+      dispatch(setCurrentChat(chat)); // Update current chat in Redux store
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  
 
   return (
     <>
@@ -119,7 +137,7 @@ function Chat() {
               </svg>
             </div>
             <div className="search-bar">
-              <input type="text" placeholder="Search..." />
+              
             </div>
             <div className="user-settings">
               <div className="settings">
@@ -131,25 +149,32 @@ function Chat() {
             </div>
           </div>
           <div className="wrapper">
-            <div className="Chat-list">
-              {chats.map((chat) => (
-                <div
-                  onClick={() => {
-                    dispatch(setCurrentChat(chat)); 
-                  }}
-                >
-                  <Conversation data={chat} currentUser={user._id} />
-                </div>
-              ))}
-            </div>
-            <ChatBox
-              chat={currentChat}
-              currentUser={user._id}
-              setSendMessage={setSendMessage}
-              receivedMessage={receivedMessage}
-            />
 
-          </div>
+  <div className="Chat-list">
+    {searchResults.map(user => (
+      <div key={user._id} onClick={() => handleUserSelection(user._id)}>
+        {user.firstName} {user.lastName}
+      </div>
+    ))}
+    {chats.map((chat) => (
+      <div
+        key={chat._id} // Assuming each chat has a unique identifier
+        onClick={() => {
+          dispatch(setCurrentChat(chat)); 
+        }}
+      >
+        <Conversation data={chat} currentUser={user._id} /> 
+      </div>
+    ))}
+  </div>
+  <ChatBox
+    chat={currentChat}
+    currentUser={user._id}
+    setSendMessage={setSendMessage}
+    receivedMessage={receivedMessage}
+  />
+</div>
+
         </div>
       </div>
     </>
