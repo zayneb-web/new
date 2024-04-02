@@ -111,15 +111,22 @@ function Chat() {
   const handleUserSelection = async (selectedUserId) => {
     setLoading(true);
     try {
-      // Create a chat with the selected user
-      const chat = await createChat({ senderId: user._id, receiverId: selectedUserId }, user.token);
-      dispatch(setCurrentChat(chat)); // Update current chat in Redux store
+      // Check if a chat already exists between the current user and the selected user
+      const existingChat = chats.find(chat => chat.members.includes(selectedUserId));
+      if (existingChat) {
+        dispatch(setCurrentChat(existingChat)); // Update current chat in Redux store
+      } else {
+        // Create a new chat with the selected user
+        const chat = await createChat({ senderId: user._id, receiverId: selectedUserId }, user.token);
+        dispatch(setCurrentChat(chat)); // Update current chat in Redux store
+      }
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
   };
+  
 
   const checkOnlineStatus = (chat) => {
     const chatMember = chat.members.find((member) => member !== user._id);

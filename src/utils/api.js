@@ -141,7 +141,7 @@ export const viewUserProfile = async (token , id)=>{
 
         const res= await apiRequest({
             url:"/users/profile-view",
-            token : token,
+            token : token,  
             method:"POST",
             data :  {id},
 
