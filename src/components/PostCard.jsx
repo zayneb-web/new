@@ -8,8 +8,20 @@ import { useForm } from "react-hook-form";
 import TextInput from "./TextInput";
 import Loading from "./Loading";
 import CustomButton from "./CustomButton";
-import { postComments } from "../assets/data";
+import { apiRequest } from "../utils/api";
 
+
+const getPostComments = async (id)=> {
+  try {
+    const res = await apiRequest({
+      url : "/posts/comments/" +id,
+      method: "GET"
+    });
+    return res?.data;
+  } catch (error) {
+    console.log(error)
+  }
+};
 const ReplyCard = ({ reply, user, handleLike }) => {
   return (
     <div className='w-full py-3'>
@@ -38,7 +50,6 @@ const ReplyCard = ({ reply, user, handleLike }) => {
         <div className='mt-2 flex gap-6'>
           <p
             className='flex gap-2 items-center text-base text-ascent-2 cursor-pointer'
-            onClick={handleLike}
           >
             {reply?.likes?.includes(user?._id) ? (
               <BiSolidLike size={20} color='blue' />
@@ -65,7 +76,40 @@ const CommentForm = ({ user, id, replyAt, getComments }) => {
     mode: "onChange",
   });
 
-  const onSubmit = async (data) => {};
+const onSubmit = async (data) => {
+  setLoading(true);
+  setErrMsg("");
+  try{
+    const URL = !replyAt
+    ? "/posts/comment/" + id
+    : "/posts/reply-comment/" + id;  
+
+    const newData={
+      comment: data?.comment,
+      from: user?.firstName + " " + user.lastName,
+      replyAt: replyAt,
+    };
+    const res = await apiRequest({
+      url: URL,
+      data: newData,
+      token:user?.token,
+      method:"POST"
+    });
+    if (res?.status === "failed"){
+      setErrMsg(res);
+    }else{
+      reset({
+        comment: ""
+      });
+      setErrMsg("");
+      await getComments();
+    }
+    setLoading(false);
+  }catch(error){
+    console.log(error);
+    setLoading(false);
+  }
+};
 
   return (
     <form
@@ -125,10 +169,10 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
   const [replyComments, setReplyComments] = useState(0);
   const [showComments, setShowComments] = useState(0);
 
-  const getComments = async () => {
+  const getComments = async (id) => {
     setReplyComments(0);
-
-    setComments(postComments);
+    const result = await getPostComments(id);
+    setComments(result);
     setLoading(false);
   };
   const handleLike = async (uri) => {
@@ -164,37 +208,44 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
       </div>
 
       <div>
-        <p className='text-ascent-2'>
-          {showAll === post?._id
-            ? post?.description
-            : post?.description.slice(0, 300)}
+  <p className='text-ascent-2'>
+    {showAll === post?._id
+      ? post?.description
+      : post?.description.slice(0, 300)}
 
-          {post?.description?.length > 301 &&
-            (showAll === post?._id ? (
-              <span
-                className='text-blue ml-2 font-mediu cursor-pointer'
-                onClick={() => setShowAll(0)}
-              >
-                Show Less
-              </span>
-            ) : (
-              <span
-                className='text-blue ml-2 font-medium cursor-pointer'
-                onClick={() => setShowAll(post?._id)}
-              >
-                Show More
-              </span>
-            ))}
-        </p>
+    {post?.description?.length > 301 &&
+      (showAll === post?._id ? (
+        <span
+          className='text-blue ml-2 font-mediu cursor-pointer'
+          onClick={() => setShowAll(0)}
+        >
+          Show Less
+        </span>
+      ) : (
+        <span
+          className='text-blue ml-2 font-medium cursor-pointer'
+          onClick={() => setShowAll(post?._id)}
+        >
+          Show More
+        </span>
+      ))}
+  </p>
 
-        {post?.image && (
-          <img
-            src={post?.image}
-            alt='post image'
-            className='w-full mt-2 rounded-lg'
-          />
-        )}
-      </div>
+  {post?.image && (
+    <img
+      src={post?.image}
+      alt='post image'
+      className='w-full mt-2 rounded-lg'
+    />
+  )}
+
+  {post?.video && (
+    <video controls className="w-full mt-2 rounded-lg">
+      <source src={post?.video} type="video/mp4" />
+    </video>
+  )}
+</div>
+
 
       <div
         className='mt-4 flex justify-between items-center px-3 py-2 text-ascent-2
@@ -270,7 +321,9 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
                   <p className='text-ascent-2'>{comment?.comment}</p>
 
                   <div className='mt-2 flex gap-6'>
-                    <p className='flex gap-2 items-center text-base text-ascent-2 cursor-pointer'>
+                    <p className='flex gap-2 items-center text-base text-ascent-2 cursor-pointer'
+                    onClick={()=> handleLike("/posts/like-comment/" + comment?._id)}
+                    >
                       {comment?.likes?.includes(user?._id) ? (
                         <BiSolidLike size={20} color='blue' />
                       ) : (

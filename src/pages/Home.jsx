@@ -16,29 +16,49 @@ import EditProfile from "../components/EditProfile";
 import { apiRequest, fetchPosts, handleFileUpload, sendFriendRequest ,getUserInfo, likePost, deletePost} from "../utils/api";
 import { UserLogin } from "../redux/userSlice";
 import Stories from "../components/Stories/stories";
-import {io} from 'socket.io-client'
+import {io} from 'socket.io-client';
+import { addNotification } from "../redux/notificationsSlice";
+import InputEmoji from "react-input-emoji";
+
+
+
+const socket = io('/',{
+  reconnection:true
+})
 //useSelector d'extraire des données du magasin Redux.
 const Home = () => {
     const isNonMobileScreens = true;
-    const { user, edit } = useSelector((state) => state.user);
+    const { user,edit } = useSelector((state) => state.user);
     const {posts} = useSelector((state )=> state.posts);
     const [friendRequest, setFriendRequest] = useState([]);
     const [suggestedFriends, setSuggestedFriends] = useState([]);
     const [errMsg, setErrMsg] = useState("");
     const [file, setFile] = useState(null);
+    const [video,setVideo]= useState(null);
     const [posting, setPosting] = useState(false);
     const [loading, setLoading] = useState(false);
     const [onlineUsers,setOnlineUsers]=useState([])
-    const socket = useRef()
+    const socketRef = useRef();
+    const [notifications, setNotifications] = useState([]);
 
-    useEffect(()=>{
-        socket.current = io('http://localhost:8800');
-        socket.current.emit("new-user-add",user._id)
-        socket.current.on('get-users',(users)=>{
-            setOnlineUsers(users);
-            console.log(onlineUsers)
-        })
-    }, [user])
+
+      
+    useEffect(() => {
+        socketRef.current = io('http://localhost:8800');
+        console.log('Emitting new-user-add event with userId:', user._id);
+        socketRef.current.emit('new-user-add', user._id);
+        socketRef.current.on('get-users', (users) => {
+        setOnlineUsers(users);
+        console.log('Received get-users event with users:', users);
+        });
+        
+        return () => {
+            socketRef.current.disconnect();
+            console.log('Socket disconnected');
+        };
+    }, [user]);
+
+    
 const dispatch = useDispatch();
     const {
         register,
@@ -51,8 +71,15 @@ const dispatch = useDispatch();
         setPosting(true);
         setErrMsg("");
         try {
-            const uri = file && (await handleFileUpload(file));
-            const newData = uri? {...data,image:uri} : data;
+            console.log('File:', file);
+            console.log('Video:', video);
+            const imageUri = file && (await handleFileUpload(file, 'image')); 
+            const videoUri = video && (await handleFileUpload(video, 'video'));   
+            const newData = {
+                ...data,
+                image: imageUri,
+                video: videoUri, 
+            };
             const res = await apiRequest({
                 url : "/posts/create-post",
                 data: newData,
@@ -65,14 +92,17 @@ const dispatch = useDispatch();
             reset({
                 description: "",
             });
+            
             setFile(null);
+            setVideo(null);
             setErrMsg("");
             await fetchPost();
         }
         setPosting(false);     
         } catch (error) {
-            console.log(error);
-            setPosting(false)   
+            console.log('Error:', error);
+            setErrMsg("An error occurred during video upload.");
+            setPosting(false);  
         }
     };
 
@@ -81,16 +111,25 @@ const dispatch = useDispatch();
         setLoading(false);
     };
 
-    const handlelikePost = async(uri)=>{
-        await likePost({uri:uri , token : user?.token});
-        await fetchPost();
+    const handlelikePost = async (uri) => {
+        try {
+            await likePost({ uri: uri, token: user?.token });
+            await fetchPost();
+            // Émettre un événement socket pour informer le backend du like sur le post
+            socketRef.current.emit('post-liked', { postId: uri, userId: user._id });
+            console.log('Emitted post-liked event with postId:', uri, 'and userId:', user._id);
+            dispatch(addNotification({ type: "info", message: "You liked a post!" }));
+        } catch (error) {
+            console.log(error);
+        }
     };
+    
     const handledelete = async (id) => {
             await deletePost(id, user.token);
             await fetchPosts();
     };
     
-
+    
     const fetchFriendRequest = async()=>{
         try{
             const res = await apiRequest({
@@ -120,6 +159,7 @@ const dispatch = useDispatch();
         try{
             const res = await sendFriendRequest(user.token,id);
             await fetchSuggestedFriends();
+            socketRef.current.emit('friend-request', { userId: user._id, friendId: id });
         }catch(error){
             console.log(error);
         }
@@ -133,6 +173,7 @@ const dispatch = useDispatch();
                 data: {rid:id,status},
             });
             setFriendRequest(res?.data);
+            socketRef.current.emit('accept-friend-request', { userId: user._id, friendId: id });
         }catch (error){
             console.log(error);
         }
@@ -142,6 +183,7 @@ const dispatch = useDispatch();
         const newData = {token: user?.token, ...res};
         dispatch(UserLogin(newData));
     };
+
 
     useEffect(()=>{
         setLoading(true);
@@ -186,6 +228,7 @@ const dispatch = useDispatch();
                                         required: "Write something about post",
                                     })}
                                     error={errors.description ? errors.description.message : ""}
+                                    
                                 />
                             </div>
                             {errMsg?.message && (
@@ -212,6 +255,7 @@ const dispatch = useDispatch();
                                         id='imgUpload'
                                         data-max-size='5120'
                                         accept='.jpg, .png, .jpeg'
+                                       
                                     />
                                     <BiImages />
                                     <span>Image</span>
@@ -224,7 +268,7 @@ const dispatch = useDispatch();
                                     <input
                                         type='file'
                                         data-max-size='5120'
-                                        onChange={(e) => setFile(e.target.files[0])}
+                                        onChange={(e) => setVideo(e.target.files[0])}
                                         className='hidden'
                                         id='videoUpload'
                                         accept='.mp4, .wav'
@@ -233,21 +277,7 @@ const dispatch = useDispatch();
                                     <span>Video</span>
                                 </label>
 
-                                <label
-                                    className='flex items-center gap-1 text-base text-ascent-2 hover:text-ascent-1 cursor-pointer'
-                                    htmlFor='vgifUpload'
-                                >
-                                    <input
-                                        type='file'
-                                        data-max-size='5120'
-                                        onChange={(e) => setFile(e.target.files[0])}
-                                        className='hidden'
-                                        id='vgifUpload'
-                                        accept='.gif'
-                                    />
-                                    <BsFiletypeGif />
-                                    <span>Gif</span>
-                                </label>
+                                
 
                                 <div>
                                     {posting ? (
@@ -378,7 +408,9 @@ const dispatch = useDispatch();
                 </div>
             </div>
 
+           
             {edit && <EditProfile />}
+            
         </>
     );
 };

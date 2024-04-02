@@ -1,5 +1,4 @@
-import React from "react";
-import { TbSocial } from "react-icons/tb";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import TextInput from "./TextInput";
@@ -10,11 +9,30 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { SetTheme } from "../redux/theme";
 import { Logout } from "../redux/userSlice";
 import { logo } from "../assets";
+import { fetchPosts } from "../utils/api";
+import { addNotification, clearNotifications, getNotifications } from '../redux/notificationsSlice'; // Updated import
+import { io } from 'socket.io-client';
+import "./style.css";
+
 
 const TopBar = () => {
   const { theme } = useSelector((state) => state.theme);
   const { user } = useSelector((state) => state.user);
+  const { notifications } = useSelector((state) => state.notifications);
+
   const dispatch = useDispatch();
+
+
+  useEffect(() => {
+    // Example of adding a notification when the component mounts
+    dispatch(addNotification({ type: "info", message: "New Notification received!" }));
+  }, [dispatch]);
+
+  const handleClearNotifications = () => {
+    dispatch(clearNotifications()); // Dispatch clearNotifications to clear notifications
+  };
+
+
   const {
     register,
     handleSubmit,
@@ -26,7 +44,9 @@ const TopBar = () => {
     dispatch(SetTheme(themeValue));
   };
 
-  const handleSearch = async (data) => {};
+  const handleSearch = async (data) => {
+    await fetchPosts(user.token, dispatch, "",data)
+  };
 
   return (
     <div className='topbar w-full flex items-center justify-between py-3 md:py- px-4 bg-primary'>
@@ -64,9 +84,14 @@ const TopBar = () => {
         <button onClick={() => handleTheme()}>
           {theme ? <BsMoon /> : <BsSunFill />}
         </button>
-        <div className='hidden lg:flex'>
-          <IoMdNotificationsOutline />
-        </div>
+        <div className="topbar-icon" onClick={handleClearNotifications}>
+        {/* Use a different icon for notifications */}
+        <IoMdNotificationsOutline />
+        {notifications.length > 0 && (
+          <span className="notification-count">{notifications.length}</span>
+        )}
+      </div>
+
 
         <div>
           <CustomButton

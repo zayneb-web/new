@@ -26,21 +26,44 @@ export const apiRequest = async({url , token , data , method})=>{
         return {status: err.success, message : err.message}
     }
 }
-export const handleFileUpload = async (uploadFile) => {
+export const handleFileUpload = async (uploadFile,fileType) => {
     //formdata envoyer plusieurs objets au mm temps
     const formData = new FormData();
     formData.append("file", uploadFile);
     formData.append("upload_preset", "BetterCallUs");
+    formData.append("resource_type", fileType);
     try {
         const response = await axios.post(
             "https://api.cloudinary.com/v1_1/djfdv95aj/upload",
             formData);
-            //secure_url : lien web qui permet d'accéder a une image
         return response.data.secure_url; 
     } catch (error) {
         console.log(error);
     }
 };
+
+export const addStory = async (token, storyData) => {
+    try {
+      const imageUrl = await handleFileUpload(storyData.image, "image");
+  
+      const res = await apiRequest({
+        url: "/stories/add",
+        token: token,
+        method: "POST",
+        data: {
+          userId: storyData.userId,
+          storyData: {
+            firstName: storyData.firstName,
+            photo: imageUrl,
+            story_photo: storyData.story_photo,
+          },
+        },
+      });
+      return res;
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 export const fetchPosts = async (token, dispatch, uri, data) => {
     try {

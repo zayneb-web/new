@@ -1,0 +1,8 @@
+/* Add styles for notification count */
+.notification-count {
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 0.2rem 0.5rem;
+  }
+  
