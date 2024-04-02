@@ -4,7 +4,7 @@ import { getUserInfo } from "../utils/api";
 import { useSelector ,useDispatch} from "react-redux";
 import { createChat } from "../utils/api";
 
-const Conversation = ({ data, currentUser }) => {
+const Conversation = ({ data, currentUser,online }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
@@ -27,41 +27,28 @@ const Conversation = ({ data, currentUser }) => {
     }
   }, [data, currentUser, user]);
 
-  // Function to handle user selection and create a chat
-  const handleUserSelection = async () => {
-    setLoading(true);
-    try {
-      // Create a chat with the selected user
-      await createChat({ members: [user._id, userData._id] }, user.token);
-      //dispatch(setCurrentChat(chat));
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+
   return (
-    <>
-      <div className="conversation-area ">
-        
-      <div className="msg online  " >
-        <img
-          className="msg-profile"
-          src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%281%29.png"
-          alt=""
-        />
-          <div className="msg-detail">
-          <div className="msg-username">   {userData?.firstName} {userData?.lastName}</div>
-        
+<>
+  <div className="conversation-area">
+    <div className={`msg ${online ? "online" : "offline"}`}>
+      <img
+        className="msg-profile"
+        src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%281%29.png"
+        alt=""
+      />
+      <div className="msg-detail">
+        <div className="msg-username">
+          {userData?.firstName} {userData?.lastName}
         </div>
-   
-        
-    
-        </div>
+        <span>{online ? "Online" : "Offline"}</span>
       </div>
-  
-    <hr style={{ width: "100%", border: "0.5px solid #ececec" }} />
-  </>
+    </div>
+  </div>
+  <hr style={{ width: "100%", border: "0.5px solid #ececec" }} />
+</>
+
+
   );
 };
 
