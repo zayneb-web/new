@@ -28,13 +28,13 @@ const TopBar = () => {
   const handleSearch = async (data) => {};
 
   return (
-    <div className='topbar w-full flex items-center justify-between py-3 md:py-6 px-4 bg-primary'>
+    <div className='topbar w-full flex items-center justify-between py-3 md:py-1 px-1 bg-primary '>
       <Link to='/' className='flex gap-2 items-center'>
         <div className='p-1 md:p-2 bg-[#F76566] rounded text-white'>
           <TbSocial />
         </div>
         <span className='text-xl md:text-2xl text-[#F76566] font-semibold'>
-          Better Call Us
+          BCU
         </span>
       </Link>
 
@@ -44,7 +44,7 @@ const TopBar = () => {
       >
         <TextInput
           placeholder='Search...'
-          styles='w-[18rem] lg:w-[38rem]  rounded-l-full py-3 '
+          styles='w-[4rem] lg:w-[17rem]  rounded-l-full py-3 '
           register={register("search")}
         />
         <CustomButton
@@ -67,7 +67,7 @@ const TopBar = () => {
           <CustomButton
             onClick={() => dispatch(Logout())}
             title='Log Out'
-            containerStyles='text-sm text-ascent-1 px-4 md:px-6 py-1 md:py-2 border border-[#666] rounded-full bg-[#F76566]'
+            containerStyles='text-sm text-ascent-1 text-white px-4 md:px-6 py-1 md:py-2  rounded-full bg-[#F76566]'
           />
         </div>
       </div>

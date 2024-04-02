@@ -1,6 +1,13 @@
 import { Outlet, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Home, Login, Profile, Register } from "./pages";
+import { Toaster } from "sonner";
+import { Home, Login, Profile, Register,VideoPage,RoomPage} from "./pages";
+import CreateCoursePage from './components/courses/CreateCourse';
+import MyCourse from './pages/MyCourse';
+import AllCourse from './pages/AllCourse';
+import UpdateCoursePage from './components/courses/UpdateCourse';
+import TasksList from './components/tasks/TasksList';
+
 //navigate between pages  
 function Layout() {
   const { user } = useSelector((state) => state.user);
@@ -24,11 +31,26 @@ function App() {
         <Route element={<Layout />}>
           <Route path='/' element={<Home />} />
           <Route path='/profile/:id?' element={<Profile />} />
+          <Route path='/VideoPage' element={<VideoPage />} />
+          <Route path='/room/:roomId' element={<RoomPage />} />
+          <Route path="/course" element={<MyCourse />} />
+          <Route path="/allcourse" element={<AllCourse />} />
+          <Route path="/course/:id" element={<UpdateCoursePage />} />
+          <Route path="/addcourse" element={<CreateCoursePage />} />
+          <Route path="/task" element={<TasksList />} />
+
+         
         </Route>
 
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
+       
+        
+        
+    
       </Routes>
+
+      <Toaster richColors />
     </div>
   );
 }
