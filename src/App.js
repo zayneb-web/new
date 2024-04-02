@@ -1,6 +1,10 @@
 import { Outlet, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Home, Login, Profile, Register } from "./pages";
+import { Home, Login, Profile, Register, Event} from "./pages";
+import AddEditEvent from "./pages/AddEditEvent";
+import SingleEvent from "./pages/SingleEvent";
+import MyEvents from "./pages/MyEvents";
+import EditEventForm from "./components/EditEventForm";
 //navigate between pages  
 function Layout() {
   const { user } = useSelector((state) => state.user);
@@ -23,11 +27,20 @@ function App() {
         {/* all those routes are protected using Layout*/}
         <Route element={<Layout />}>
           <Route path='/' element={<Home />} />
+          <Route path='/search' element={<Home />} />
+
           <Route path='/profile/:id?' element={<Profile />} />
         </Route>
 
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
+        <Route path='/event' element={<Event />} />
+        <Route path='/addevent' element={<AddEditEvent />} />
+        <Route path='/event/:id' element={<SingleEvent />} />
+        <Route path='/myevents' element={<MyEvents/>} />
+        <Route path='/edit-event/:id' element={<EditEventForm />} />
+        
+
       </Routes>
     </div>
   );
