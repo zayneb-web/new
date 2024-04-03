@@ -107,9 +107,10 @@ const ProfileCard = ({ user }) => {
             <BsFacebook className=' text-xl text-ascent-1' />
             <span>Facebook</span>
           </div>
-          </div>
+
+          
         </div>
-        
+
         <div className='w-full flex flex-col gap-4 py-4 pb-6'>
           <p className='text-ascent-1 text-lg font-semibold'>Others</p>
 
@@ -134,7 +135,7 @@ const ProfileCard = ({ user }) => {
           </div>
 
           </div>
-         
+
       </div>
     </div>
   );
