@@ -209,9 +209,8 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
 
       <div>
   <p className='text-ascent-2'>
-    {showAll === post?._id
-      ? post?.description
-      : post?.description.slice(0, 300)}
+  {showAll === post?._id ? post?.description : post?.description?.slice(0, 300)}
+ 
 
     {post?.description?.length > 301 &&
       (showAll === post?._id ? (

@@ -111,18 +111,20 @@ const dispatch = useDispatch();
         setLoading(false);
     };
 
-    const handlelikePost = async (uri) => {
+    const handlelikePost = async (uri, friendId) => {
         try {
             await likePost({ uri: uri, token: user?.token });
             await fetchPost();
             // Émettre un événement socket pour informer le backend du like sur le post
-            socketRef.current.emit('post-liked', { postId: uri, userId: user._id });
-            console.log('Emitted post-liked event with postId:', uri, 'and userId:', user._id);
+            socketRef.current.emit('post-liked', { postId: uri, userId: user._id, friendUserId: friendId });
+            console.log('Emitted post-liked event with postId:', uri, 'and userId:', user._id, 'by friendId:', friendId);
             dispatch(addNotification({ type: "info", message: "You liked a post!" }));
         } catch (error) {
             console.log(error);
         }
     };
+    
+    
     
     const handledelete = async (id) => {
             await deletePost(id, user.token);
@@ -155,14 +157,17 @@ const dispatch = useDispatch();
             console.log(error);
         }
     };
-    const handleFriendRequest = async(id)=>{
+    const handleFriendRequest = async(friendId)=>{
         try{
-            const res = await sendFriendRequest(user.token,id);
+            const res = await sendFriendRequest(user.token,friendId);
             await fetchSuggestedFriends();
-            socketRef.current.emit('friend-request', { userId: user._id, friendId: id });
-        }catch(error){
-            console.log(error);
-        }
+            socketRef.current.emit('Send-friend-request', { userId: user._id, friendId });
+
+        console.log('Sent friend request to userId:', friendId);
+    } catch (error) {
+        console.log(error);
+    }
+    
     };
     const acceptFriendRequest = async(id,status)=>{
         try{
@@ -173,7 +178,8 @@ const dispatch = useDispatch();
                 data: {rid:id,status},
             });
             setFriendRequest(res?.data);
-            socketRef.current.emit('accept-friend-request', { userId: user._id, friendId: id });
+            socketRef.current.emit('friend-request', { userId: user._id, friendId: id ,status });
+            console.log('Emitted friend-request event with userId:', user._id, 'friendId:', id, 'and status:', status);
         }catch (error){
             console.log(error);
         }
