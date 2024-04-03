@@ -48,7 +48,7 @@ function Chat() {
     });
     socket.current.on('notification', (message) => {
       // Update the notification state with the new notification
-      setNotifications((prevNotifications) => [...prevNotifications, message]);
+     setNotifications((prevNotifications) => [...prevNotifications, message]);
       console.log("message", message);
       // Increment the badge count
       //dispatch(incrementBadgeCount());
@@ -164,11 +164,7 @@ function Chat() {
           <div className="wrapper">
 
   <div className="Chat-list">
-    {searchResults.map(user => (
-      <div key={user._id} onClick={() => handleUserSelection(user._id)}>
-        {user.firstName} {user.lastName}
-      </div>
-    ))}
+   
     {chats.map((chat) => (
       <div
         key={chat._id} // Assuming each chat has a unique identifier

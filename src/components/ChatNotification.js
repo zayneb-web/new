@@ -68,7 +68,8 @@ const ChatNotification = () => {
             <div className="py-2" style={{ overflowY: 'auto', maxHeight: '16rem' }}>
               {Object.values(lastMessages).length > 0 ? (
                 Object.values(lastMessages).map((message, index) => (
-                  <Link to={`/chat`} className="flex items-center px-4 py-3 hover:bg-bgColor bg-primary -mx-2" onClick={() => handleNotificationClick(message.senderId)} key={index}>
+                  <Link to={`/chat
+                  `} className="flex items-center px-4 py-3 hover:bg-bgColor bg-primary -mx-2" onClick={() => handleNotificationClick(message.senderId)} key={index}>
                     <img className="h-8 w-8 rounded-full object-cover mx-1" src={user?.profileUrl ?? NoProfile} alt="Profile" />
                     <p className="text-gray-600 text-sm mx-2">
                       <span className="font-bold">{message?.senderName}: {message.text}</span>
