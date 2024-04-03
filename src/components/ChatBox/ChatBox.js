@@ -29,8 +29,38 @@ export const ChatBox = ({
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [callError, setCallError] = useState(null);
   const zeroCloudInstance = useRef(null);
+  const [sendingVideo, setSendingVideo] = useState(false);
   const [calleeId, setCalleeId] = useState(""); // Define calleeId state
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioData, setAudioData] = useState(null);
   const scroll = useRef();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const searchUsers = async () => {
+    try {
+      const userInfo = await getUserInfo(user.token, searchTerm); // Call getUserInfo function to fetch user data
+      if (userInfo) {
+        setSearchResults([userInfo]); // Wrap the user data in an array and set it as search results
+      } else {
+        setSearchResults([]); // If no user found, set search results to an empty array
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+
+  // Function to handle search button click
+  const handleSearch = () => {
+    searchUsers();
+  };
+
+  // Function to handle selecting a user for a new conversation
+  const handleUserSelect = (selectedUserId) => {
+    // You can perform additional actions here, such as initiating a conversation with the selected user
+    setSelectedUser(selectedUserId);
+  };
 
   function randomID(len) {
     let result = "";
@@ -142,6 +172,23 @@ export const ChatBox = ({
   const handleChange = (newMessage) => {
     setNewMessage(newMessage);
   };
+
+  const handleStart = () => {
+    setIsRecording(true);
+  };
+
+  const handleStop = () => {
+    setIsRecording(false);
+  };
+
+  const onData = (recordedBlob) => {
+    console.log('chunk of real-time data is: ', recordedBlob);
+  };
+
+  const onStop = (recordedBlob) => {
+    console.log('recordedBlob is: ', recordedBlob);
+    setAudioData(recordedBlob.blob);
+  };
   const handleSend = async () => {
     if (!newMessage.trim() && !selectedImage && !selectedVideo) {
       // If there is no text message, no image, and no video selected, return early
@@ -149,6 +196,7 @@ export const ChatBox = ({
     }
 
     try {
+   
       let messageData = {
         senderId: currentUser,
         chatId: chat._id,
@@ -175,6 +223,7 @@ export const ChatBox = ({
       }
 
       if (selectedVideo) {
+        setSendingVideo(true);
         // If a video is selected, upload it to Cloudinary
         const form = new FormData();
         form.append("file", selectedVideo);
@@ -191,6 +240,7 @@ export const ChatBox = ({
         // Update the video attribute in the message with the Cloudinary URL
         messageData.video = videoUrl;
       }
+     setSendingVideo(false);
 
       // Emit the message data to the socket server
       const receiverId = chat.members.find((id) => id !== currentUser);
@@ -208,6 +258,7 @@ export const ChatBox = ({
     } catch (error) {
       console.log("error", error);
     }
+  
   };
 
   useEffect(() => {
@@ -247,7 +298,25 @@ export const ChatBox = ({
     <>
       {chat ? (
         <>
-          <div className="chat-area">
+        
+          <div className="chat-area  ">
+              {/* Search input field */}
+      <input
+        type="text"
+        placeholder="Search users..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      {/* Search button */}
+      <button onClick={handleSearch}>Search</button>
+      {/* Display search results */}
+      <div>
+        {searchResults.map((user) => (
+          <div key={user.id} onClick={() => handleUserSelect(user.id)}>
+            {user.name}
+          </div>
+        ))}
+      </div>
             {messages.map((message, index) => (
               <div
                 ref={scroll}
@@ -386,9 +455,14 @@ export const ChatBox = ({
                 </button>
               </div>
               <InputEmoji value={newMessage} onChange={setNewMessage} />
-              <div className="btn btn-sm btn btn-primary" onClick={handleSend}>
-                Send
-              </div>
+              <div className="btn btn-sm btn-primary" onClick={handleSend}>
+  {sendingVideo ? ( // Render loading indicator if sendingVideo is true
+    <span className="loading loading-spinner"></span>
+  ) : (
+    "Send"
+  )}
+</div>
+
             </div>
           </div>
 

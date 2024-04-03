@@ -130,7 +130,7 @@ html {
 
 .app {
   position: fixed; /* Make the container fixed */
-  top: 56%; /* Adjust as needed */
+  top: 57%; /* Adjust as needed */
 bottom: 50%;
   transform: translateY(-50%); /* Center the container vertically */
   display: flex;
@@ -138,7 +138,7 @@ bottom: 50%;
   background-color: var(--theme-bg-color);
   max-width: calc(1600px + 400px); /* Adjust the max-width */
   width: calc(100% - 38px); /* Adjust the width (160px from left and 160px from right) */
-  height: 80vh;
+  height: 84vh;
   left: 14px; /* Space from the left */
   right:14px; /* Space from the right */
   overflow: hidden;
@@ -169,7 +169,11 @@ bottom: 50%;
 .detail-area {
  width: 340px;
  flex-shrink: 0;
+ 
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Add your desired shadow properties here */
 }
+
+
 
 .detail-area {
  border-left: 1px solid var(--border-color);
@@ -185,6 +189,7 @@ bottom: 50%;
   flex-direction: column;
   overflow: auto;
   flex-grow: 1; /* Add this line */
+  
 }
 
 .search-bar {
@@ -192,6 +197,7 @@ bottom: 50%;
  z-index: 3;
  position: relative;
  margin-left: px;
+ 
 
  input {
   height: 100%;
@@ -483,6 +489,7 @@ bottom: 50%;
 }
 
 .chat-area-footer {
+  
   display: flex;
   border-top: 1px solid var(--border-color);
   width: 100%;

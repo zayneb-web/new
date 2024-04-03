@@ -9,6 +9,11 @@
   scrollbar-width: none;
   
 }
+html {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+ }
+ 
 
 .topbar{
 position: sticky;
@@ -76,8 +81,8 @@ z-index: 49;
     --color-bg: 227 227 227;
     --color-primary: 255 255 255;
     --color-secondary:255 255 255;
-   
-
+    --background-color: #fcfcfa;
+    --color-custom: 194, 190, 190;
     --color-ascent1: 0 0 0;
     --color-ascent2: 89 91 100;
     --color-blue: 6 90 216;
@@ -87,6 +92,8 @@ z-index: 49;
   /* //15 23 42  21 30 49*/
   [data-theme="dark"] {
      --color-bg: 12 12 12;
+     --color-custom-dark: 56, 54, 54;
+     --background-color: #272725;
      --color-primary: 31 31 31;
     --color-secondary: 47 45 48;
     --color-secondary-light: 66 66 66;
@@ -95,7 +102,7 @@ z-index: 49;
     --color-blue: 6 90 216;
     /* //16 176 255; */
     --color-white: 255 255 255;
-
+    --background-color: #27292d;
       --body-bg-color: #1d1d1d;
       --theme-bg-color: #27292d;
       --border-color: #323336;

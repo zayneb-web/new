@@ -34,7 +34,7 @@ function App() {
         <Route path='/login' element={<Login />} />
         <Route path='/chat' element={<Chat />} />
         <Route path='/video' element={<VideoCall />} />
-          <Route path='/chat/:senderId' element={<Chat />} />
+     
 
       </Routes>
     </div>

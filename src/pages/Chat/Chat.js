@@ -48,7 +48,7 @@ function Chat() {
     });
     socket.current.on('notification', (message) => {
       // Update the notification state with the new notification
-      setNotifications((prevNotifications) => [...prevNotifications, message]);
+     setNotifications((prevNotifications) => [...prevNotifications, message]);
       console.log("message", message);
       // Increment the badge count
       //dispatch(incrementBadgeCount());
@@ -111,15 +111,22 @@ function Chat() {
   const handleUserSelection = async (selectedUserId) => {
     setLoading(true);
     try {
-      // Create a chat with the selected user
-      const chat = await createChat({ senderId: user._id, receiverId: selectedUserId }, user.token);
-      dispatch(setCurrentChat(chat)); // Update current chat in Redux store
+      // Check if a chat already exists between the current user and the selected user
+      const existingChat = chats.find(chat => chat.members.includes(selectedUserId));
+      if (existingChat) {
+        dispatch(setCurrentChat(existingChat)); // Update current chat in Redux store
+      } else {
+        // Create a new chat with the selected user
+        const chat = await createChat({ senderId: user._id, receiverId: selectedUserId }, user.token);
+        dispatch(setCurrentChat(chat)); // Update current chat in Redux store
+      }
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
   };
+  
 
   const checkOnlineStatus = (chat) => {
     const chatMember = chat.members.find((member) => member !== user._id);
@@ -157,11 +164,7 @@ function Chat() {
           <div className="wrapper">
 
   <div className="Chat-list">
-    {searchResults.map(user => (
-      <div key={user._id} onClick={() => handleUserSelection(user._id)}>
-        {user.firstName} {user.lastName}
-      </div>
-    ))}
+   
     {chats.map((chat) => (
       <div
         key={chat._id} // Assuming each chat has a unique identifier
