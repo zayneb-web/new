@@ -1,8 +1,15 @@
 import { Outlet, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+
+import AddEditEvent from "./pages/AddEditEvent";
+import SingleEvent from "./pages/SingleEvent";
+import MyEvents from "./pages/MyEvents";
+import EditEventForm from "./components/EditEventForm";
+
+
 import { Toaster } from "sonner";
-import { Home, Login, Profile, Register,VideoPage,RoomPage} from "./pages";
+import { Home, Login, Profile, Register,VideoPage,RoomPage,Event} from "./pages";
 import CreateCoursePage from './components/courses/CreateCourse';
 import MyCourse from './pages/MyCourse';
 import AllCourse from './pages/AllCourse';
@@ -10,9 +17,10 @@ import UpdateCoursePage from './components/courses/UpdateCourse';
 import TasksList from './components/tasks/TasksList';
 
 
-import { Home, Login, Profile, Register } from "./pages";
+
 import Chat from "./pages/Chat/Chat.js";
 import VideoCall from "./components/VideoCall.js";
+
 
 //navigate between pages  
 function Layout() {
@@ -38,6 +46,8 @@ function App() {
         {/* all those routes are protected using Layout*/}
         <Route element={<Layout />}>
           <Route path='/' element={<Home />} />
+          <Route path='/search' element={<Home />} />
+
           <Route path='/profile/:id?' element={<Profile />} />
           <Route path='/VideoPage' element={<VideoPage />} />
           <Route path='/room/:roomId' element={<RoomPage />} />
@@ -53,9 +63,18 @@ function App() {
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
 
+        <Route path='/event' element={<Event />} />
+        <Route path='/addevent' element={<AddEditEvent />} />
+        <Route path='/event/:id' element={<SingleEvent />} />
+        <Route path='/myevents' element={<MyEvents/>} />
+        <Route path='/edit-event/:id' element={<EditEventForm />} />
+        
+
+
         <Route path='/chat' element={<Chat />} />
         <Route path='/video' element={<VideoCall />} />
      
+
 
 
       </Routes>

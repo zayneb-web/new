@@ -9,11 +9,13 @@ import { BsMoon, BsSunFill } from "react-icons/bs";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { SetTheme } from "../redux/theme";
 import { Logout } from "../redux/userSlice";
+
 import { logo } from "../assets";
 import { Badge } from "@mui/material";
 import { MdMail } from "react-icons/md";
 import ChatNotification from './ChatNotification';
 import { decrementBadgeCount } from '../redux/chatSlice';
+
 const TopBar = () => {
   const { theme } = useSelector((state) => state.theme);
   const { user } = useSelector((state) => state.user);
@@ -38,7 +40,9 @@ const TopBar = () => {
 
   return (
 
+
     <div className='topbar w-full flex items-center justify-between py-3 md:py- px-4 bg-primary'>
+
 
       <Link to='/' className='flex gap-2 items-center'>
         <div className='p-1 md:p-2  rounded text-white'>
@@ -48,6 +52,7 @@ const TopBar = () => {
               className='w-14 h-14 object-cover rounded'
             />
         </div>
+
 
         <span className='text-xl md:text-2xl text-[#d00000] font-bold'>
           ESPRIT
@@ -94,7 +99,9 @@ const TopBar = () => {
             onClick={() => dispatch(Logout())}
             title='Log Out'
 
+
             containerStyles='text-sm text-white px-4 md:px-6 py-1 md:py-2 rounded-full bg-[#D00000]'
+
 
           />
         </div>
