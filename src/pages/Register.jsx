@@ -104,6 +104,17 @@ const Register = () => {
                 error={errors.lastName ? errors.lastName?.message : ""}
               />
             </div>
+            <TextInput
+              name='profession'
+              placeholder='profession'
+              label='Your Profession'
+              type='profession'
+              register={register("profession", {
+                required: "profession is required",
+              })}
+              styles='w-full'
+              error={errors.profession ? errors.profession.message : ""}
+            />
 
             <TextInput
               name='email'

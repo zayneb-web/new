@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Loading from "../components/Loading";
 import CustomButton from "../components/CustomButton";
 import TextInput from "../components/TextInput";
-//import { suggest, requests } from "../assets/data";
 import { Link } from "react-router-dom";
 import { NoProfile } from "../assets";
 import { BsFiletypeGif, BsPersonFillAdd } from "react-icons/bs";
@@ -14,10 +13,13 @@ import TopBar from "../components/TopBar";
 import FriendsCard from "../components/FriendsCard";
 import PostCard from "../components/PostCard";
 import EditProfile from "../components/EditProfile";
-import { apiRequest, fetchPosts, handleFileUpload, sendFriendRequest ,getUserInfo} from "../utils/api";
+import { apiRequest, fetchPosts, handleFileUpload, sendFriendRequest ,getUserInfo, likePost, deletePost} from "../utils/api";
 import { UserLogin } from "../redux/userSlice";
-//useSelector d'extraire des données du magasin Redux.
+import Stories from "../components/Stories/stories";
+import {io} from 'socket.io-client';
+
 const Home = () => {
+    const isNonMobileScreens = true;
     const { user, edit } = useSelector((state) => state.user);
     const {posts} = useSelector((state )=> state.posts);
     const [friendRequest, setFriendRequest] = useState([]);
@@ -26,7 +28,19 @@ const Home = () => {
     const [file, setFile] = useState(null);
     const [posting, setPosting] = useState(false);
     const [loading, setLoading] = useState(false);
-const dispatch = useDispatch();
+    const [onlineUsers,setOnlineUsers]=useState([])
+    const socket = useRef()
+
+    useEffect(()=>{
+        socket.current = io('http://localhost:8800');
+        socket.current.emit("new-user-add",user._id)
+        socket.current.on('get-users',(users)=>{
+            setOnlineUsers(users);
+            console.log(onlineUsers)
+        })
+    }, [user])
+
+    const dispatch = useDispatch();
     const {
         register,
         handleSubmit,
@@ -37,6 +51,7 @@ const dispatch = useDispatch();
     const handlePostSubmit = async (data) => {
         setPosting(true);
         setErrMsg("");
+
         try {
             const uri = file && (await handleFileUpload(file));
             const newData = uri? {...data,image:uri} : data;
@@ -46,20 +61,20 @@ const dispatch = useDispatch();
                 token: user?.token,
                 method: "POST",
             });
-        if (res?.status === "failed"){
-            setErrMsg(res);
-        }else{
-            reset({
-                description: "",
-            });
-            setFile(null);
-            setErrMsg("");
-            await fetchPost();
-        }
-        setPosting(false);     
+            if (res?.status === "failed"){
+                setErrMsg(res);
+            } else {
+                reset({
+                    description: "",
+                });
+                setFile(null);
+                setErrMsg("");
+                await fetchPost();
+            }
+            setPosting(false);     
         } catch (error) {
             console.log(error);
-            setPosting(false)   
+            setPosting(false);
         }
     };
 
@@ -68,8 +83,15 @@ const dispatch = useDispatch();
         setLoading(false);
     };
 
-    const handlelikePost = async()=>{};
-    const handledelete = async()=>{};
+    const handlelikePost = async(uri)=>{
+        await likePost({uri:uri , token : user?.token});
+        await fetchPost();
+    };
+
+    const handledelete = async (id) => {
+        await deletePost(id, user.token);
+        await fetchPosts();
+    };
 
     const fetchFriendRequest = async()=>{
         try{
@@ -78,12 +100,12 @@ const dispatch = useDispatch();
                 token: user?.token,
                 method:"POST",
             });
-
             setFriendRequest(res?.data);
         }catch(error){
             console.log(error);
         }
     };
+
     const fetchSuggestedFriends = async()=>{
         try{
             const res = await apiRequest({
@@ -96,6 +118,7 @@ const dispatch = useDispatch();
             console.log(error);
         }
     };
+
     const handleFriendRequest = async(id)=>{
         try{
             const res = await sendFriendRequest(user.token,id);
@@ -104,6 +127,7 @@ const dispatch = useDispatch();
             console.log(error);
         }
     };
+
     const acceptFriendRequest = async(id,status)=>{
         try{
             const res = await apiRequest({
@@ -117,6 +141,7 @@ const dispatch = useDispatch();
             console.log(error);
         }
     };
+
     const getUser = async()=>{
         const res = await getUserInfo(user?.token);
         const newData = {token: user?.token, ...res};
@@ -130,11 +155,12 @@ const dispatch = useDispatch();
         fetchFriendRequest();
         fetchSuggestedFriends();
     },[]);
+
     return (
         <>
-            <div className='w-full px-0 lg:px-10 pb-20 2xl:px-40 bg-bgColor lg:rounded-lg h-screen overflow-hidden'>
-                <TopBar />
+            <TopBar />
 
+            <div className='min-h-screen w-full px-0 lg:px-10 pb-20 2xl:px-10 bg-bgColor lg:rounded-lg h-screen overflow-hidden'>
                 <div className='w-full flex gap-2 lg:gap-4 pt-5 pb-10 h-full'>
                     {/* LEFT */}
                     <div className='hidden w-1/3 lg:w-1/4 h-full md:flex flex-col gap-6 overflow-y-auto'>
@@ -144,6 +170,9 @@ const dispatch = useDispatch();
 
                     {/* CENTER */}
                     <div className='flex-1 h-full px-4 flex flex-col gap-6 overflow-y-auto rounded-lg'>
+                        <div className='bg-primary px-4 rounded-lg'>
+                            <Stories />
+                        </div>
                         <form
                             onSubmit={handleSubmit(handlePostSubmit)}
                             className='bg-primary px-4 rounded-lg'
@@ -232,12 +261,13 @@ const dispatch = useDispatch();
                                         <CustomButton
                                             type='submit'
                                             title='Post'
-                                            containerStyles='bg-[#F76566] text-white py-1 px-6 rounded-full font-semibold text-sm'
+                                            containerStyles='bg-[#D00000] text-white py-1 px-6 rounded-full font-semibold text-sm'
                                         />
                                     )}
                                 </div>
                             </div>
                         </form>
+
                         {loading ? (
                             <Loading />
                         ) : posts?.length > 0 ? (
@@ -246,8 +276,8 @@ const dispatch = useDispatch();
                                     key={post?._id}
                                     post={post}
                                     user={user}
-                                    deletePost={() => { }}
-                                    likePost={() => { }}
+                                    deletePost={handledelete}
+                                    likePost={handlelikePost}
                                 />
                             ))
                         ) : (
@@ -257,7 +287,7 @@ const dispatch = useDispatch();
                         )}
                     </div>
 
-                    {/* RIGJT */}
+                    {/* RIGHT */}
                     <div className='hidden w-1/4 h-full lg:flex flex-col gap-8 overflow-y-auto'>
                         {/* FRIEND REQUEST */}
                         <div className='w-full bg-primary shadow-sm rounded-lg px-6 py-5'>
@@ -292,7 +322,7 @@ const dispatch = useDispatch();
                                             <CustomButton
                                                 title='Accept'
                                                 onClick={() => acceptFriendRequest(_id,"Accepted")}
-                                                containerStyles='bg-[#F76566] text-xs text-white px-1.5 py-1 rounded-full'
+                                                containerStyles='bg-[#D00000] text-xs text-white px-1.5 py-1 rounded-full'
                                             />
                                             <CustomButton
                                                 title='Deny'
@@ -341,7 +371,7 @@ const dispatch = useDispatch();
                                                 className='bg-[rgba(4,68,164,0.19)] text-sm text-white p-1 rounded'
                                                 onClick={() => {handleFriendRequest(friend?._id)}}
                                             >
-                                                <BsPersonFillAdd size={20} className='text-[#F76566]' />
+                                                <BsPersonFillAdd size={20} className='text-[#D00000]' />
                                             </button>
                                         </div>
                                     </div>

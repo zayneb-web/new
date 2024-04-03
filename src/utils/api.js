@@ -1,7 +1,9 @@
 import axios from 'axios';
 import {SetPosts} from "../redux/postSlice";
 
+
 const API_URL = "http://localhost:5000";
+
 
 export const API= axios.create ({
 
@@ -27,18 +29,20 @@ export const apiRequest = async({url , token , data , method})=>{
     }
 }
 export const handleFileUpload = async (uploadFile) => {
+
+    //formdata envoyer plusieurs objets au mm temps
+    const formData = new FormData();
+    formData.append("file", uploadFile);
+    formData.append("upload_preset", "BetterCallUs");
     try {
-        const formData = new FormData();
-        formData.append("file", uploadFile);
-        const response = await API.post("/upload", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        });
-        return response.data.url; // Assuming the server responds with the file URL
+        const response = await axios.post(
+            "https://api.cloudinary.com/v1_1/djfdv95aj/upload",
+            formData);
+            //secure_url : lien web qui permet d'accéder a une image
+        return response.data.secure_url; 
     } catch (error) {
-        console.error("File upload failed:", error);
-        throw error;
+        console.log(error);
+
     }
 };
 
@@ -47,7 +51,9 @@ export const fetchPosts = async (token, dispatch, uri, data) => {
         const res = await apiRequest({
             url : uri || "/posts",
             token : token,
+
             method:"GET",
+
             data: data || {}
         });
         dispatch(SetPosts(res?.data));
@@ -68,15 +74,21 @@ export const likePost = async({uri,token})=>{
         console.log(error);
     }
 };
+
+
 export const deletePost=async(id,token)=>{
     try {
         const res = await apiRequest({
-            url:"posts" + id,
+            url: "/posts/" + id,
             token : token,
             method:"DELETE",
-        })
+        });
+        return;
     } catch (error) {
-        console.log(error);
+        console.error("An error occurred:", error);
+        console.log("Error details:", error.response);
+    
+
     }
 };
 export const getUserInfo = async(token, id) => {
@@ -129,7 +141,7 @@ export const viewUserProfile = async (token , id)=>{
 
         const res= await apiRequest({
             url:"/users/profile-view",
-            token : token,
+            token : token,  
             method:"POST",
             data :  {id},
 
@@ -139,6 +151,7 @@ export const viewUserProfile = async (token , id)=>{
         console.log(error)
     }
 }
+
 
 export const addcourse = async (token, data) => {
     try {
@@ -195,4 +208,33 @@ export const addcourse = async (token, data) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }
+
+//--------------------------messegesApi------------------------------------
+export const getMessages = (id, token) => apiRequest({ url: `/message/${id}`, token });
+
+export const addMessage = (data, token) => apiRequest({ url: '/message/add', data, method: 'POST', token });
+//-------------------------chatapi---------------------
+
+export const createChat = (data, token) => apiRequest({ url: '/chat/', data, method: 'POST', token });
+
+export const getUserChats = async (userId, token) => {
+    try {
+      const res = await apiRequest({
+        url: `/chat/${userId}`, 
+        token: token,
+        method: "GET"
+      });
+      return res || [];
+    } catch (error) {
+      console.log(error);
+      return []; 
+    }
+};
+
+
+export const findChat = (firstId, secondId, token) =>
+  apiRequest({ url: `/chat/find/${firstId}/${secondId}`, token });
+  //------------socket ---------------------------
+
+

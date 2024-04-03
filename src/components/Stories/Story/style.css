@@ -1,0 +1,65 @@
+.story{
+    cursor: pointer;
+    width: 130px;
+    height: 200px;
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+    border:2px solid white;
+    margin: 0 8px;
+    overflow: hidden;
+    box-shadow: 0 0 102px -15px rgba(0, 0, 0,0.75) inset;
+
+}
+.story:hover{
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.9);
+}
+.new{
+   background-image: url("https://images.pexels.com/photos/16140935/pexels-photo-16140935/free-photo-of-cafe-tasse-cappuccino-expresso.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"); 
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: flex-end;
+   background-size: cover;
+   opacity: 0.3;
+}
+.new .addIcon{
+    padding: 1px 2px;
+    color: white;
+    border: 1px solid white;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+.new span{
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 12px;
+}
+.old{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: start;
+    color: white;
+}
+.old .user-details{
+    margin-left: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    width: 35px;
+    height: 35px;
+    overflow: hidden;
+    border: 2px solid white;
+}
+.old .user-details img{
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+}
+.old h3{
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 12px;
+}

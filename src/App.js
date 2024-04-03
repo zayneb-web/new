@@ -1,5 +1,6 @@
 import { Outlet, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+
 import { Toaster } from "sonner";
 import { Home, Login, Profile, Register,VideoPage,RoomPage} from "./pages";
 import CreateCoursePage from './components/courses/CreateCourse';
@@ -8,9 +9,16 @@ import AllCourse from './pages/AllCourse';
 import UpdateCoursePage from './components/courses/UpdateCourse';
 import TasksList from './components/tasks/TasksList';
 
+
+import { Home, Login, Profile, Register } from "./pages";
+import Chat from "./pages/Chat/Chat.js";
+import VideoCall from "./components/VideoCall.js";
+
 //navigate between pages  
 function Layout() {
   const { user } = useSelector((state) => state.user);
+  const chats = useSelector((state) => state.chat.chats);
+  
   //useLocation est utilisé pour obtenir l'entrée actuelle qui représente l'URL où l'application est actuellement rendue.
   const location = useLocation();
 //for securtiy if the user have a token then he will have the access to all the pages (outled) sinon login
@@ -23,7 +31,7 @@ function Layout() {
 
 function App() {
   const { theme } = useSelector((state) => state.theme);
-
+  
   return (
     <div data-theme={theme} className='w-full min-h-[100vh]'>
       <Routes>
@@ -44,10 +52,12 @@ function App() {
 
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
-       
-        
-        
-    
+
+        <Route path='/chat' element={<Chat />} />
+        <Route path='/video' element={<VideoCall />} />
+     
+
+
       </Routes>
 
       <Toaster richColors />
