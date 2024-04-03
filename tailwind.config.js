@@ -11,7 +11,9 @@ module.exports = {
         1: "rgb(var(--color-ascent1) / 1)",
         2: "rgb(var(--color-ascent2) / 1)",
       },
+
       customColor: "#D00000", // Define your custom color here
+
     },
     screens: {
       sm: "640px",

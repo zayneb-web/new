@@ -21,6 +21,9 @@ const userSlice = createSlice({
     updateProfile(state, action) {
       state.edit = action.payload;
     },
+    setOpenSidebar: (state, action) => {
+      state.isSidebarOpen = action.payload;
+    },
   },
 });
 export default userSlice.reducer;
@@ -40,5 +43,14 @@ export function Logout() {
 export function UpdateProfile(val) {
   return (dispatch, getState) => {
     dispatch(userSlice.actions.updateProfile(val));
+
   };
 }
+
+//Sidebar function
+export function setOpenSidebar(open) {
+  return (dispatch, getState) => {
+    dispatch(userSlice.actions.setOpenSidebar(open));
+  };
+
+};

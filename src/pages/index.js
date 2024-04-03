@@ -3,4 +3,15 @@ import Login from "./Login";
 import Register from "./Register";
 import Profile from "./Profile";
 import ResetPassword from "./ResetPassword";
-export {Home,Login,Register,Profile,ResetPassword};
+
+import Event from "./Event";
+
+
+import VideoPage from "./Video";
+import RoomPage from "./RoomPage";
+import MyCourse from './MyCourse';
+import Task from './tasks';
+
+
+export {Home,Login,Register,Profile,ResetPassword,VideoPage,RoomPage,MyCourse as Course,Task,Event};
+
