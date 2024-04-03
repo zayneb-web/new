@@ -42,3 +42,10 @@ export function UpdateProfile(val) {
     dispatch(userSlice.actions.updateProfile(val));
   };
 }
+
+//Sidebar function
+export function setOpenSidebar(open) {
+  return (dispatch, getState) => {
+    dispatch(userSlice.actions.setOpenSidebar(open));
+  };
+};

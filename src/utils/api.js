@@ -153,6 +153,63 @@ export const viewUserProfile = async (token , id)=>{
 }
 
 
+export const addcourse = async (token, data) => {
+    try {
+      const res = await apiRequest({
+        url: '/course/createcourse',
+        token: token,
+        method: 'POST',
+        data: data,
+      });
+      return res;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  export const getCourseById = async (token, id) => {
+    try {
+      const res = await apiRequest({
+        url: '/course/getcourse/' + id,
+        token: token,
+        method: 'GET',
+      });
+      return res;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  export const updateCourse = async (token, data) => {
+    console.log(data);
+    try {
+      const res = await apiRequest({
+        url: '/course/updatecourse/' + data._id,
+        token: token,
+        method: 'PUT',
+        data: data,
+      });
+      return res;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  export const uploadFile = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await API.post('/course/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return res.data.url;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 //--------------------------messegesApi------------------------------------
 export const getMessages = (id, token) => apiRequest({ url: `/message/${id}`, token });
 
