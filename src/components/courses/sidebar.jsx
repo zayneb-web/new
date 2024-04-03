@@ -8,6 +8,7 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import { MessageSquarePlus } from 'lucide-react';
+import { SiGooglemeet } from "react-icons/si";
 
 const Sidebar = ({ setSearchedCourse }) => {
   const location = useLocation();
@@ -32,6 +33,11 @@ const Sidebar = ({ setSearchedCourse }) => {
         link: 'addcourse',
         icon: <MessageSquarePlus />,
       },
+      {
+        label: 'Meet',
+        link: 'VideoPage',
+        icon: <SiGooglemeet />,
+      },
     ],
     []
   );
@@ -46,7 +52,7 @@ const Sidebar = ({ setSearchedCourse }) => {
   return (
     <div className="h-full flex flex-col  p-5 bg-white">
       <div className="flex   items-center gap-2">
-        <MdOutlineAddTask className="text-[#3b82f6] text-4xl" />
+        <MdOutlineAddTask className="text-[#D00000] text-4xl" />
         <h1 className="text-3xl font-bold text-black">Courses</h1>
       </div>
       <div className="flex flex-col mt-2 justify-between mb-5">

@@ -66,11 +66,11 @@ export default function TasksComponent({ openDialog }) {
     });
   };
   return (
-    <div className="max-w-7xl mx-auto p-6 h-full ml-0 w-full">
+    <div className="max-w-7xl mx-auto p-20 h-full ml-0 w-full">
       <h1 className="text-3xl font-bold mb-4">Task List</h1>
       <div className="flex items-center space-x-4 mb-6">
         <button
-          className="ml-auto bg-[#0c0a09] text-white px-4 py-2 rounded-md"
+          className="ml-auto bg-[#D00000] text-white px-4 py-2 rounded-md"
           onClick={() => openDialog()}
         >
           New
