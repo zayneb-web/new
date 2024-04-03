@@ -1,5 +1,4 @@
-import React from "react";
-import { TbSocial } from "react-icons/tb";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import TextInput from "./TextInput";
@@ -11,16 +10,39 @@ import { SetTheme } from "../redux/theme";
 import { Logout } from "../redux/userSlice";
 
 import { logo } from "../assets";
+
+import { fetchPosts } from "../utils/api";
+import { addNotification, clearNotifications, getNotifications } from '../redux/notificationsSlice'; // Updated import
+import { io } from 'socket.io-client';
+import "./style.css";
+
+
 import { Badge } from "@mui/material";
 import { MdMail } from "react-icons/md";
 import ChatNotification from './ChatNotification';
 import { decrementBadgeCount } from '../redux/chatSlice';
 
+
 const TopBar = () => {
   const { theme } = useSelector((state) => state.theme);
   const { user } = useSelector((state) => state.user);
+  const { notifications } = useSelector((state) => state.notifications);
+
   const dispatch = useDispatch();
+
+
+
+  useEffect(() => {
+    // Example of adding a notification when the component mounts
+    dispatch(addNotification({ type: "info", message: "New Notification received!" }));
+  }, [dispatch]);
+
+  const handleClearNotifications = () => {
+    dispatch(clearNotifications()); // Dispatch clearNotifications to clear notifications
+  };
+
   const notification = useSelector((state) => state.chat.notification); 
+
 
   const {
     register,
@@ -33,9 +55,14 @@ const TopBar = () => {
     dispatch(SetTheme(themeValue));
   };
 
+
+  const handleSearch = async (data) => {
+    await fetchPosts(user.token, dispatch, "",data)
+
   const handleSearch = async (data) => {};
   const handleNotificationClick = (senderId) => {
     dispatch(decrementBadgeCount(senderId)); // Dispatch action to decrement badge count for the specific sender
+
   };
 
   return (
@@ -81,6 +108,16 @@ const TopBar = () => {
         <button onClick={() => handleTheme()}>
           {theme ? <BsMoon /> : <BsSunFill />}
         </button>
+
+        <div className="topbar-icon" onClick={handleClearNotifications}>
+        {/* Use a different icon for notifications */}
+        <IoMdNotificationsOutline />
+        {notifications.length > 0 && (
+          <span className="notification-count">{notifications.length}</span>
+        )}
+      </div>
+
+
         <Link to="#">
           <ChatNotification onClick={handleNotificationClick} notification={notification} />
           {notification && notification.badgeCount > 0 && (
@@ -93,6 +130,7 @@ const TopBar = () => {
         <div className='hidden lg:flex'>
           <IoMdNotificationsOutline />
         </div>
+
 
         <div>
           <CustomButton
