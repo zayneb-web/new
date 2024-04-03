@@ -91,7 +91,7 @@ const ProfileCard = ({ user }) => {
             </span>
           </div>
         </div>
-        <div className='w-full flex flex-col gap-2 py-4 border-b border-[#66666645]'>
+
         <div className='w-full flex flex-col gap-4 py-4 pb-6'>
           <p className='text-ascent-1 text-lg font-semibold'>Social Profile</p>
 
@@ -107,10 +107,8 @@ const ProfileCard = ({ user }) => {
             <BsFacebook className=' text-xl text-ascent-1' />
             <span>Facebook</span>
           </div>
-
           
         </div>
-
         <div className='w-full flex flex-col gap-4 py-4 pb-6'>
           <p className='text-ascent-1 text-lg font-semibold'>Others</p>
 
@@ -135,7 +133,6 @@ const ProfileCard = ({ user }) => {
           </div>
 
           </div>
-
       </div>
     </div>
   );

@@ -2,7 +2,6 @@ import { Outlet, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 
-import AddEditEvent from "./pages/AddEditEvent";
 import SingleEvent from "./pages/SingleEvent";
 import MyEvents from "./pages/MyEvents";
 import EditEventForm from "./components/EditEventForm";
@@ -64,7 +63,7 @@ function App() {
         <Route path='/login' element={<Login />} />
 
         <Route path='/event' element={<Event />} />
-        <Route path='/addevent' element={<AddEditEvent />} />
+      
         <Route path='/event/:id' element={<SingleEvent />} />
         <Route path='/myevents' element={<MyEvents/>} />
         <Route path='/edit-event/:id' element={<EditEventForm />} />

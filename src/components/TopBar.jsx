@@ -1,4 +1,6 @@
+
 import React, { useEffect, useState } from "react";
+import { TbSocial } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import TextInput from "./TextInput";
@@ -8,42 +10,21 @@ import { BsMoon, BsSunFill } from "react-icons/bs";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { SetTheme } from "../redux/theme";
 import { Logout } from "../redux/userSlice";
-
 import { logo } from "../assets";
-
-import { fetchPosts } from "../utils/api";
-import { addNotification, clearNotifications, getNotifications } from '../redux/notificationsSlice'; // Updated import
-import { io } from 'socket.io-client';
-import "./style.css";
-
-
 import { Badge } from "@mui/material";
 import { MdMail } from "react-icons/md";
 import ChatNotification from './ChatNotification';
 import { decrementBadgeCount } from '../redux/chatSlice';
+import { addNotification, clearNotifications, getNotifications } from '../redux/notificationsSlice'; // Updated import
+
 
 
 const TopBar = () => {
   const { theme } = useSelector((state) => state.theme);
   const { user } = useSelector((state) => state.user);
-  const { notifications } = useSelector((state) => state.notifications);
-
   const dispatch = useDispatch();
-
-
-
-  useEffect(() => {
-    // Example of adding a notification when the component mounts
-    dispatch(addNotification({ type: "info", message: "New Notification received!" }));
-  }, [dispatch]);
-
-  const handleClearNotifications = () => {
-    dispatch(clearNotifications()); // Dispatch clearNotifications to clear notifications
-  };
-
   const notification = useSelector((state) => state.chat.notification); 
-
-
+  const { notifications } = useSelector((state) => state.notifications);
   const {
     register,
     handleSubmit,
@@ -55,22 +36,22 @@ const TopBar = () => {
     dispatch(SetTheme(themeValue));
   };
 
-
-  const handleSearch = async (data) => {
-    await fetchPosts(user.token, dispatch, "",data)
-
   const handleSearch = async (data) => {};
   const handleNotificationClick = (senderId) => {
     dispatch(decrementBadgeCount(senderId)); // Dispatch action to decrement badge count for the specific sender
-
+  };
+ 
+  const handleClearNotifications = () => {
+    dispatch(clearNotifications()); // Dispatch clearNotifications to clear notifications
   };
 
+  useEffect(() => {
+    // Example of adding a notification when the component mounts
+    dispatch(addNotification({ type: "info", message: "New Notification received!" }));
+  }, [dispatch]);
+
   return (
-
-
     <div className='topbar w-full flex items-center justify-between py-3 md:py- px-4 bg-primary'>
-
-
       <Link to='/' className='flex gap-2 items-center'>
         <div className='p-1 md:p-2  rounded text-white'>
         <img
@@ -79,11 +60,8 @@ const TopBar = () => {
               className='w-14 h-14 object-cover rounded'
             />
         </div>
-
-
         <span className='text-xl md:text-2xl text-[#d00000] font-bold'>
           ESPRIT
-
         </span>
       </Link>
 
@@ -93,7 +71,7 @@ const TopBar = () => {
       >
         <TextInput
           placeholder='Search...'
-          styles='w-[4rem] lg:w-[17rem]  rounded-l-full py-3 '
+          styles='w-[18rem] lg:w-[38rem]  rounded-l-full py-3 '
           register={register("search")}
         />
         <CustomButton
@@ -108,7 +86,6 @@ const TopBar = () => {
         <button onClick={() => handleTheme()}>
           {theme ? <BsMoon /> : <BsSunFill />}
         </button>
-
         <div className="topbar-icon" onClick={handleClearNotifications}>
         {/* Use a different icon for notifications */}
         <IoMdNotificationsOutline />
@@ -117,7 +94,8 @@ const TopBar = () => {
         )}
       </div>
 
-
+      {/* ICONS */}
+     
         <Link to="#">
           <ChatNotification onClick={handleNotificationClick} notification={notification} />
           {notification && notification.badgeCount > 0 && (
@@ -131,20 +109,16 @@ const TopBar = () => {
           <IoMdNotificationsOutline />
         </div>
 
-
         <div>
           <CustomButton
             onClick={() => dispatch(Logout())}
             title='Log Out'
-
-
             containerStyles='text-sm text-white px-4 md:px-6 py-1 md:py-2 rounded-full bg-[#D00000]'
-
-
           />
         </div>
       </div>
     </div>
+    
   );
 };
 
