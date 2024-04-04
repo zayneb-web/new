@@ -23,8 +23,8 @@ import VideoCall from "./components/VideoCall.js";
 
 //navigate between pages  
 function Layout() {
-  const { user } = useSelector((state) => state.user);
-  const chats = useSelector((state) => state.chat.chats);
+  const { user } = useSelector((state) => state?.user);
+  const chats = useSelector((state) => state.chat?.chats);
   
   //useLocation est utilisé pour obtenir l'entrée actuelle qui représente l'URL où l'application est actuellement rendue.
   const location = useLocation();

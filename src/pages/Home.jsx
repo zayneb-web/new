@@ -332,7 +332,7 @@ const dispatch = useDispatch();
                                 {friendRequest?.map(({ _id, requestFrom: from }) => (
                                     <div key={_id} className='flex items-center justify-between'>
                                         <Link
-                                            to={"/profile/" + from._id}
+                                            to={"/profile/" + from?._id}
                                             className='w-full flex gap-4 items-center cursor-pointer'
                                         >
                                             <img

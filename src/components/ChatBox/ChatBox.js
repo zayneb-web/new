@@ -39,7 +39,7 @@ export const ChatBox = ({
   const [selectedUser, setSelectedUser] = useState(null);
   const searchUsers = async () => {
     try {
-      const userInfo = await getUserInfo(user.token, searchTerm); // Call getUserInfo function to fetch user data
+      const userInfo = await getUserInfo(user?.token, searchTerm); // Call getUserInfo function to fetch user data
       if (userInfo) {
         setSearchResults([userInfo]); // Wrap the user data in an array and set it as search results
       } else {
@@ -89,8 +89,8 @@ export const ChatBox = ({
         setUserData(fetchedUserData);
         const roomID = getUrlParams().get("roomID") || randomID(5);
 
-        const userName = fetchedUserData.firstName;
-        const userId = fetchedUserData._id;
+        const userName = fetchedUserData?.firstName;
+        const userId = fetchedUserData?._id;
         console.log("username and id", userName, userId);
         // Extract user information
 
@@ -124,8 +124,8 @@ export const ChatBox = ({
   }, [chat, currentUser, user]);
 
   function handleSendcall(callType) {
-    const sender = user._id;
-    const callee = user._id;
+    const sender = user?._id;
+    const callee = user?._id;
     if (!callee) {
       setCallError("userID cannot be empty!!"); // Update callError state
       return;
@@ -156,7 +156,7 @@ export const ChatBox = ({
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const data = await getMessages(chat._id, user.token);
+        const data = await getMessages(chat?._id, user?.token);
         setMessages(data);
         console.log("data", data);
       } catch (error) {
@@ -169,26 +169,7 @@ export const ChatBox = ({
     }
   }, [chat, user]);
 
-  const handleChange = (newMessage) => {
-    setNewMessage(newMessage);
-  };
 
-  const handleStart = () => {
-    setIsRecording(true);
-  };
-
-  const handleStop = () => {
-    setIsRecording(false);
-  };
-
-  const onData = (recordedBlob) => {
-    console.log('chunk of real-time data is: ', recordedBlob);
-  };
-
-  const onStop = (recordedBlob) => {
-    console.log('recordedBlob is: ', recordedBlob);
-    setAudioData(recordedBlob.blob);
-  };
   const handleSend = async () => {
     if (!newMessage.trim() && !selectedImage && !selectedVideo) {
       // If there is no text message, no image, and no video selected, return early
@@ -199,7 +180,7 @@ export const ChatBox = ({
    
       let messageData = {
         senderId: currentUser,
-        chatId: chat._id,
+        chatId: chat?._id,
         text: newMessage.trim(),
         file: selectedImage ? selectedImage.name : "",
         video: "", // Initialize video attribute as an empty string
@@ -262,7 +243,7 @@ export const ChatBox = ({
   };
 
   useEffect(() => {
-    if (receivedMessage && receivedMessage.chatId === chat._id) {
+    if (receivedMessage && receivedMessage.chatId === chat?._id) {
       setMessages((prevMessages) => [...prevMessages, receivedMessage]);
     }
   }, [receivedMessage, chat]);
@@ -301,22 +282,8 @@ export const ChatBox = ({
         
           <div className="chat-area  ">
               {/* Search input field */}
-      <input
-        type="text"
-        placeholder="Search users..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-      {/* Search button */}
-      <button onClick={handleSearch}>Search</button>
-      {/* Display search results */}
-      <div>
-        {searchResults.map((user) => (
-          <div key={user.id} onClick={() => handleUserSelect(user.id)}>
-            {user.name}
-          </div>
-        ))}
-      </div>
+     
+     
             {messages.map((message, index) => (
               <div
                 ref={scroll}
@@ -555,7 +522,7 @@ export const ChatBox = ({
       ) : (
         <div className="flex items-center justify-center w-full h-full">
           <div className="px-4 text-center sm:text-lg md:text-xl text-black-200 font-semibold flex flex-col items-center gap-2">
-            <p>Welcome 👋 {user.firstName} </p>
+            <p>Welcome 👋 {user?.firstName} </p>
             <p>Select a chat to start messaging</p>
           </div>
         </div>

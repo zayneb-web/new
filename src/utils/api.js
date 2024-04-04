@@ -370,6 +370,31 @@ export const getMessages = (id, token) => apiRequest({ url: `/message/${id}`, to
 
 export const addMessage = (data, token) => apiRequest({ url: '/message/add', data, method: 'POST', token });
 //-------------------------chatapi---------------------
+// In api.js
+
+export const fetchUsers = async (token) => {
+  try {
+    const response = await apiRequest({
+      url: "/users/all-users",
+      token: token,
+      method: "GET",
+    });
+    console.log("Response data:", response.data); 
+    // Check if the response is successful and contains the expected data format
+    if (response && response.data && Array.isArray(response.data)) {
+      // Return the response data directly since it's already an array of users
+      return response.data;
+    } else {
+      // Throw an error if the response data is not in the expected format
+      throw new Error("Response data is not in the expected format");
+    }
+  } catch (error) {
+    // Handle any errors that occur during the fetch request
+    console.error("Error fetching users:", error);
+    throw error; // Re-throw the error to be handled by the caller
+  }
+};
+
 
 export const createChat = (data, token) => apiRequest({ url: '/chat/', data, method: 'POST', token });
 
