@@ -169,8 +169,9 @@ bottom: 50%;
 .detail-area {
  width: 340px;
  flex-shrink: 0;
+
  
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Add your desired shadow properties here */
+  box-shadow: 0px 4px 8px rgba(2, 2, 2, 0.1); /* Add your desired shadow properties here */
 }
 
 
@@ -189,6 +190,8 @@ bottom: 50%;
   flex-direction: column;
   overflow: auto;
   flex-grow: 1; /* Add this line */
+  background-image: url("https://neuronacreativa.com/cattleya/app-assets/images/backgrounds/chat-bg-2.png");
+
   
 }
 

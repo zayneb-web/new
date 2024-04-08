@@ -63,26 +63,13 @@ function EditEventForm() {
   
 
   return (
-    <>
-      <style>
-        {`
-          /* CSS for EditEventForm component */
-          /* Add these styles to your existing CSS file or component */
-          .form-container {
-            /* Add your styles for form container */
-          }
-          .error-message {
-            /* Add your styles for error message */
-          }
-        `}
-      </style>
-
-      <div className="form-container">
-        <h2>Edit Event</h2>
+    <div className="container mx-auto p-5 flex justify-center items-center h-full">
+      <div className="max-w-md w-full bg-white shadow-lg rounded-lg overflow-hidden">
+        <h2 className="text-center text-2xl font-bold mb-4">Edit Event</h2>
         {loading ? (
           <Loading />
         ) : (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="p-6">
             <TextInput
               name="title"
               label="Title"
@@ -90,6 +77,7 @@ function EditEventForm() {
               type="text"
               value={formData.title || ''}
               onChange={handleChange}
+              className="mb-4"
             />
             <TextInput
               name="description"
@@ -98,6 +86,7 @@ function EditEventForm() {
               type="text"
               value={formData.description || ''}
               onChange={handleChange}
+              className="mb-4"
             />
             <TextInput
               name="date"
@@ -106,6 +95,7 @@ function EditEventForm() {
               type="date"
               value={formData.date || ''}
               onChange={handleChange}
+              className="mb-4"
             />
             <TextInput
               name="location"
@@ -114,18 +104,18 @@ function EditEventForm() {
               type="text"
               value={formData.location || ''}
               onChange={handleChange}
+              className="mb-4"
             />
-            {/* Add other input fields for event data */}
-            {error && <p className="error-message">Error: {error}</p>}
+            {error && <p className="text-red-500 mb-4">{error}</p>}
             <CustomButton
               type="submit"
-              containerStyles={`inline-flex justify-center mb-5 rounded-md bg-blue px-8 py-3 text-sm font-medium text-white outline-none`}
+              containerStyles={`w-full rounded-md bg-blue-500 hover:bg-blue-700 px-2 py-2 text-sm font-medium mt-5 text-white`}
               title="Update Event"
             />
           </form>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

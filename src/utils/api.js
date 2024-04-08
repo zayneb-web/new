@@ -2,6 +2,7 @@ import axios from 'axios';
 import {SetPosts} from "../redux/postSlice";
 import { SetEvents } from '../redux/eventSlice';
 import { SetEvent } from '../redux/eventSlice';
+import { SetUsers } from '../redux/userSlice';
 
 
 const API_URL = "http://localhost:5000";
@@ -335,6 +336,7 @@ export const getCourseById = async (token, id) => {
   }
 };
 
+
 export const updateCourse = async (token, data) => {
   console.log(data);
   try {
@@ -418,4 +420,52 @@ export const findChat = (firstId, secondId, token) =>
   //------------socket ---------------------------
 
 
+
+  export const resetPassword = async (token, email, newPassword) => {
+    try {
+      const res = await apiRequest({
+        url: "/users/reset-password",
+        method: "POST",
+        data: { email, password: newPassword },
+        token: token,
+      });
+      return res; // Assuming the response contains relevant information about success or failure
+    } catch (error) {
+      console.log(error);
+      // Handle error if needed
+      return { status: "failed", message: "Failed to reset password. Please try again." };
+    }
+  };
+
+  export const getUsers = async (token, dispatch) => {
+    try {
+      const res = await apiRequest({
+        url: '/users/allUsers',
+        token: token,
+        method: 'GET',
+      });
+   
+      dispatch(SetUsers(res?.users)); // Assuming you have SetUsers action
+      return res;
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      throw error; // Rethrow the error to be handled by the caller
+    }
+  };
+  
+  export const deleteUser=async(id,token)=>{
+    try {
+        const res = await apiRequest({
+            url: "/users/user/delete/" + id,
+            token : token,
+            method:"DELETE",
+        });
+        return;
+    } catch (error) {
+        console.error("An error occurred:", error);
+        console.log("Error details:", error.response);
+    
+    }
+  }
+  
 

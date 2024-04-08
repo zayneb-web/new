@@ -15,7 +15,6 @@ import PostCard from "../components/PostCard";
 import EditProfile from "../components/EditProfile";
 import { apiRequest, fetchPosts, handleFileUpload, sendFriendRequest ,getUserInfo, likePost, deletePost} from "../utils/api";
 import { UserLogin } from "../redux/userSlice";
-import Stories from "../components/Stories/stories";
 import {io} from 'socket.io-client';
 import { addNotification } from "../redux/notificationsSlice";
 import InputEmoji from "react-input-emoji";
@@ -44,7 +43,7 @@ const Home = () => {
 
       
     useEffect(() => {
-        socketRef.current = io('http://localhost:8800');
+        socketRef.current = io('http://localhost:5000');
         console.log('Emitting new-user-add event with userId:', user._id);
         socketRef.current.emit('new-user-add', user._id);
         socketRef.current.on('get-users', (users) => {
@@ -166,9 +165,7 @@ const dispatch = useDispatch();
         console.log('Sent friend request to userId:', friendId);
     } catch (error) {
         console.log(error);
-    }
-    
-    };
+    }}
     const acceptFriendRequest = async(id,status)=>{
         try{
             const res = await apiRequest({
@@ -209,12 +206,14 @@ const dispatch = useDispatch();
                     <div className='hidden w-1/3 lg:w-1/4 h-full md:flex flex-col gap-6 overflow-y-auto'>
                         <ProfileCard user={user} />
                         <FriendsCard friends={user?.friends} />
+                        <Link to="/dashboard/admin">
+          Go to Dashboard Admin
+        </Link>
                     </div>
 
                     {/* CENTER */}
                     <div className='flex-1 h-full px-4 flex flex-col gap-6 overflow-y-auto rounded-lg'>
                     <div className='bg-primary px-4 rounded-lg'>
-              <Stories />
             </div>
                         <form
                             onSubmit={handleSubmit(handlePostSubmit)}
@@ -282,6 +281,19 @@ const dispatch = useDispatch();
                                     <BiSolidVideo />
                                     <span>Video</span>
                                 </label>
+                                {file && (
+    <div className='flex items-center gap-2 mt-2'>
+        <BsFiletypeGif size={30} className='text-green-600' />
+        <span>{file.name}</span>
+    </div>
+)}
+
+{video && (
+    <div className='flex items-center gap-2 mt-2'>
+        <BiImages size={30} className='text-green-600' />
+        <span>{video.name}</span>
+    </div>
+)}
 
                                 
 
@@ -416,7 +428,15 @@ const dispatch = useDispatch();
 
            
             {edit && <EditProfile />}
-            
+             <div className="fixed bottom-10 right-10">
+  {user?.role === 0 ? null : (
+    <Link to={`/dashboard?token=${user?.token}`}>
+      <button className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+        Go to Admin Dashboard
+      </button>
+    </Link>
+  )}
+</div>
         </>
     );
 };

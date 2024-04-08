@@ -1,17 +1,22 @@
 import React, { useState } from "react";
+import { TbSocial } from "react-icons/tb";
+import TextInput from "../components/TextInput"
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useForm } from "react-hook-form";
-import { TbSocial } from "react-icons/tb";
 import { BsShare } from "react-icons/bs";
 import { AiOutlineInteraction } from "react-icons/ai";
 import { ImConnection } from "react-icons/im";
-import TextInput from "../components/TextInput"
-import { BgImage } from "../assets";
-import Loading from "../components/Loading";
 import CustomButton from "../components/CustomButton"
+import { BgImage } from "../assets";
 import { apiRequest } from "../utils/api";
 import { UserLogin } from "../redux/userSlice";
+import Loading from "../components/Loading";
+import { logo } from "../assets";
+
+
+
+
 
 const Login = () => {
   
@@ -63,11 +68,15 @@ const Login = () => {
         {/* LEFT */}
         <div className='w-full lg:w-1/2 h-full p-10 2xl:px-20 flex flex-col justify-center '>
           <div className='w-full flex gap-2 items-center mb-6'>
-            <div className='p-2 bg-[#d80668] rounded text-white'>
-              <TbSocial />
-            </div>
-            <span className='text-2xl text-[#d8066f] font-semibold'>
-              BETTER CALL US
+          <div className='p-1 md:p-2  rounded text-white'>
+        <img
+              src={logo}
+              alt='Bg Image'
+              className='w-14 h-14 object-cover rounded'
+            />
+        </div>
+            <span className='text-2xl text-[#D00000] font-semibold'>
+              Esprit
             </span>
           </div>
 
@@ -140,7 +149,7 @@ const Login = () => {
             Don't have an account?
             <Link
               to='/register'
-              className='text-[#d80650] font-semibold ml-2 cursor-pointer'
+              className='text-[#D00000] font-semibold ml-2 cursor-pointer'
             >
               Create Account
             </Link>
@@ -184,4 +193,5 @@ const Login = () => {
     </div>
   );
 };
+
 export default Login;

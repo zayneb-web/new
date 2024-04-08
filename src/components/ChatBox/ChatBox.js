@@ -293,12 +293,7 @@ export const ChatBox = ({
                 }`}
               >
                 <div class="chat-image avatar">
-                  <div class="w-10 rounded-full">
-                    <img
-                      alt="Tailwind CSS chat bubble component"
-                      src={user?.profileUrl ?? NoProfile}
-                    />
-                  </div>
+                  
                 </div>
                 {message.file ? (
                   // Display image if message has a file
@@ -470,7 +465,7 @@ export const ChatBox = ({
                   >
                     <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
                   </svg>
-                  video call
+                  Voice call
                 </button>
                 <button className="detail-button"  onClick={() =>
                     handleSendcall(ZegoUIKitPrebuilt.InvitationTypeVoiceCall)
@@ -488,7 +483,7 @@ export const ChatBox = ({
                     <path d="M23 7l-7 5 7 5V7z" />
                     <rect x={1} y={5} width={15} height={14} rx={2} ry={2} />
                   </svg>
-                  voice call
+                  Video call
                 </button>
                
               </div>

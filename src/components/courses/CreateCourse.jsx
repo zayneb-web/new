@@ -75,8 +75,9 @@ const CreateCoursePage = () => {
   };
 
   return (
-    <div className="w-full px-0 lg:px-10 pb-20 2xl:px-40 bg-bgColor lg:rounded-lg h-full ">
-      <TopBar />
+    <>
+    <TopBar />
+    <div className="w-full min-h-screen bg-bgColor lg:rounded-lg overflow-hidden">
       <div className="w-full flex gap-2 lg:gap-4 pt-2 h-full">
         <div className="hidden bg-white w-1/3 lg:w-1/4 h-full md:flex flex-col gap-6 overflow-y-auto h-screen">
           <Sidebar />
@@ -179,6 +180,7 @@ const CreateCoursePage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

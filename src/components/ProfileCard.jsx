@@ -1,5 +1,4 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState , useRef } from "react";
 import { Link } from "react-router-dom";
 import { LiaEditSolid } from "react-icons/lia";
 import {
@@ -14,10 +13,13 @@ import moment from "moment";
 
 import { NoProfile } from "../assets";
 import { UpdateProfile } from "../redux/userSlice";
+import EditProfile from "../components/EditProfile"
+import { useDispatch, useSelector } from "react-redux";
 
 const ProfileCard = ({ user }) => {
   const { user: data, edit } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const [showEditPost, setShowEditPost] = useState(false);
 
   return (
     <div>
@@ -45,7 +47,7 @@ const ProfileCard = ({ user }) => {
               <LiaEditSolid
                 size={22}
                 className='text-blue cursor-pointer'
-                onClick={() =>  (UpdateProfile(true))}
+                onClick={() =>  setShowEditPost(true)}
               />
             ) : (
               <button
@@ -57,6 +59,7 @@ const ProfileCard = ({ user }) => {
             )}
           </div>
         </div>
+        {showEditPost && <EditProfile onClose={() => setShowEditPost(false)} />} {/* Pass onClose prop to handle closing AddEvent */}
 
         <div className='w-full flex flex-col gap-2 py-4 border-b border-[#66666645]'>
           <div className='flex gap-2 items-center text-ascent-2'>

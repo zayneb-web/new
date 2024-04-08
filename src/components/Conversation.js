@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getUserInfo } from "../utils/api";
 import { useSelector, useDispatch } from "react-redux";
 import { createChat } from "../utils/api";
+import { NoProfile } from "../assets";
 
 const Conversation = ({ data, currentUser, online, friendSuggestions }) => {
   const dispatch = useDispatch();
@@ -35,7 +36,7 @@ const Conversation = ({ data, currentUser, online, friendSuggestions }) => {
         <div className={`msg ${online ? "online" : "offline"}`}>
           <img
             className="msg-profile"
-            src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%281%29.png"
+            src={user?.profileUrl ?? NoProfile}
             alt=""
           />
           <div className="msg-detail">

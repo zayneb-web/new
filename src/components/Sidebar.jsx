@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { MdDashboard, MdOutlineAddTask, MdOutlinePendingActions, MdSettings, MdTaskAlt, MdEventAvailable } from "react-icons/md";
+import { MdOutlineAddTask, MdOutlinePendingActions, MdSettings, MdTaskAlt, MdEventAvailable } from "react-icons/md";
 import { FaTasks, FaTrashAlt, FaUsers, FaUser } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { setOpenSidebar } from "../redux/userSlice";
+import { MessageSquarePlus } from 'lucide-react';
 import TextInput from "./TextInput";
 import CustomButton from "./CustomButton";
 import clsx from "clsx";
@@ -12,14 +13,12 @@ import AddEvent from "./AddEvent";
 import { MdOutlineSearch } from "react-icons/md";
 import Event from "../pages/Event";
 import MyEvents from "../pages/MyEvents";
-import { searchEvents } from "../utils/api"; // Import the searchEvents function
+import { SiGooglemeet } from "react-icons/si";
+import Video from "../pages/Video"
 
+import { searchEvents } from "../utils/api"; // Import the searchEvents function
 const linkData = [
-  {
-    label: "Dashboard",
-    link: "dashboard",
-    icon: <MdDashboard />,
-  },
+
   {
     label: "Events",
     link: "/Event",
@@ -30,26 +29,8 @@ const linkData = [
     link: "/MyEvents",
     icon: <FaUser />,
   },
-  {
-    label: "In Progress",
-    link: "in-progress/in progress",
-    icon: <MdOutlinePendingActions />,
-  },
-  {
-    label: "To Do",
-    link: "todo/todo",
-    icon: <MdOutlinePendingActions />,
-  },
-  {
-    label: "Team",
-    link: "team",
-    icon: <FaUsers />,
-  },
-  {
-    label: "Trash",
-    link: "trashed",
-    icon: <FaTrashAlt />,
-  },
+ 
+  
 ];
 
 const Sidebar = ({ setSearchedEvent }) => {
@@ -108,12 +89,10 @@ const Sidebar = ({ setSearchedEvent }) => {
   return (
     <>
       <div className='w-full h-full flex flex-col gap-6 p-5'>
-        <h1 className='flex gap-1 items-center'>
-          <p className='bg-blue-600 p-2 rounded-full'>
-            <MdOutlineAddTask className='text-black text-2xl font-black' />
-          </p>
-          <span className='text-3xl font-bold text-black'>Events</span>
-        </h1>
+      <div className="flex   items-center gap-2">
+        <MdOutlineAddTask className="text-[#D00000] text-4xl" />
+        <h1 className="text-3xl font-bold text-black">Events</h1>
+      </div>
 
         {/* Search Input */}
         <div className="w-64 2xl:w-[400px] flex items-center py-2 px-3 gap-2 rounded-full bg-[#f3f4f6]">
@@ -146,16 +125,23 @@ const Sidebar = ({ setSearchedEvent }) => {
           {sidebarLinks.map((link) => (
             <NavLink el={link} key={link.label} />
           ))}
-        </div>
+          <div className="item-center mr-8 px-3" style={{ display: 'flex', alignItems: 'center' }}>
+      <SiGooglemeet style={{ marginRight: '5px' }}/> {/* Adjust styling as needed */}
+      <Link to="/VideoPage" style={{ textDecoration: 'none', color: 'inherit', marginRight: '5px' }}>Meet</Link>
+    </div>
+<div className=''>
 
-        <div className=''>
           <button
             onClick={() => setShowAddEvent(true)}
             className='w-full flex gap-2 p-2 items-center text-lg text-gray-800 bg-gray hover:bg-[#2564ed2d] rounded'
           >
+            <MessageSquarePlus />
             <span>Create Event</span>
           </button>
         </div>
+
+        </div>
+            
       </div>
       {showAddEvent && <AddEvent onClose={() => setShowAddEvent(false)} />} {/* Pass onClose prop to handle closing AddEvent */}
     </>

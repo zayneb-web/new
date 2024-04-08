@@ -1,14 +1,15 @@
 import { Outlet, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-
+import EmailVerificationSuccess from "./pages/EmailVerificationSuccess.jsx";
 import SingleEvent from "./pages/SingleEvent";
 import MyEvents from "./pages/MyEvents";
 import EditEventForm from "./components/EditEventForm";
 
-
+import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
+import DashbordAdmin from "./pages/DashbordAdmin.jsx";
 import { Toaster } from "sonner";
-import { Home, Login, Profile, Register,VideoPage,RoomPage,Event} from "./pages";
+import { Home, Login, Profile, Register,VideoPage,RoomPage,Event, ResetPassword} from "./pages";
 import CreateCoursePage from './components/courses/CreateCourse';
 import MyCourse from './pages/MyCourse';
 import AllCourse from './pages/AllCourse';
@@ -48,6 +49,7 @@ function App() {
           <Route path='/search' element={<Home />} />
 
           <Route path='/profile/:id?' element={<Profile />} />
+          <Route path='/dashboard/:id?' element={<DashbordAdmin />} />
           <Route path='/VideoPage' element={<VideoPage />} />
           <Route path='/room/:roomId' element={<RoomPage />} />
           <Route path="/course" element={<MyCourse />} />
@@ -61,7 +63,9 @@ function App() {
 
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
-
+        <Route path='/reset-password' element={<ResetPassword />} />
+        <Route path="/users/reset-password/:userId/:token" element={<ResetPasswordPage />} />
+        <Route path='/emailVerif' element={< EmailVerificationSuccess />} />
         <Route path='/event' element={<Event />} />
       
         <Route path='/event/:id' element={<SingleEvent />} />

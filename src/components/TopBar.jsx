@@ -105,9 +105,7 @@ const TopBar = () => {
           )}
         </Link>
 
-        <div className='hidden lg:flex'>
-          <IoMdNotificationsOutline />
-        </div>
+      
 
         <div>
           <CustomButton

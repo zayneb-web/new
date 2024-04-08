@@ -15,7 +15,7 @@ const VideoPage = () => {
   return (
     <div className="video-page-container">
       <div className="video-page-content">
-        <h2>Join a Meeting</h2>
+        <h2 className="mb-5">Join a Meeting</h2>
         <input
           className="room-code-input"
           value={value}

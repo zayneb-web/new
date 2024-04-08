@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import CustomButton from "../components/CustomButton";
 import Loading from "../components/Loading";
-import TextInput from "../components/TextInput";
+import TextInput from "../components/TextInput"
+import CustomButton from "../components/CustomButton"
 import { apiRequest } from "../utils/api";
-
 
 
 const ResetPassword = () => {
