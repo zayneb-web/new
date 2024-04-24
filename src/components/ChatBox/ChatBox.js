@@ -23,7 +23,7 @@ export const ChatBox = ({
   const [userData, setUserData] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const user = useSelector((state) => state.user.user);
+  const user = useSelector((state) => state.user);
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);

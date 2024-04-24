@@ -9,7 +9,7 @@ import TextInput from "./TextInput";
 import Loading from "./Loading";
 import CustomButton from "./CustomButton";
 import { apiRequest } from "../utils/api";
-
+import UpdateComment from "./UpdateComment";
 
 const getPostComments = async (id)=> {
   try {
@@ -67,6 +67,8 @@ const ReplyCard = ({ reply, user, handleLike }) => {
 const CommentForm = ({ user, id, replyAt, getComments }) => {
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
+ 
+
   const {
     register,
     handleSubmit,
@@ -161,13 +163,18 @@ const onSubmit = async (data) => {
   );
 };
 
-const PostCard = ({ post, user, deletePost, likePost }) => {
+const PostCard = ({ post, user, deletePost, likePost, deleteComment}) => {
   const [showAll, setShowAll] = useState(0);
   const [showReply, setShowReply] = useState(0);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [replyComments, setReplyComments] = useState(0);
   const [showComments, setShowComments] = useState(0);
+  const [editMode, setEditMode] = useState(false);
+  const [showUpdateCommentForm, setShowUpdateCommentForm] = useState(""); 
+  const [updatedCommentData, setUpdatedCommentData] = useState(""); 
+   
+  
 
   const getComments = async (id) => {
     setReplyComments(0);
@@ -178,6 +185,36 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
   const handleLike = async (uri) => {
     await likePost(uri);
     await getComments(post?._id);
+  };
+  
+  const handleDeletePost = async () => {
+    await deletePost(post._id, user.token);
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    await deleteComment(commentId);
+    await getComments(post?._id);
+  };
+  const handleUpdateComment = async (commentId) => {
+    try {
+      const existingComment = comments.find((comment) => comment?._id === commentId);
+      if (!existingComment) {
+        console.log("Comment not found");
+        return;
+      }
+      setUpdatedCommentData(existingComment.comment);
+      setShowUpdateCommentForm(commentId); 
+      } catch (error) {
+      console.log("Error updating comment:", error);
+    }
+  };
+  const handleUpdateSubmit = async (data) => {
+    console.log("Updated comment data:", data);
+    setShowUpdateCommentForm(""); // Cacher le formulaire de mise à jour après la soumission
+  };
+  
+  const handleLikePost = async () => {
+    await likePost({ uri: `/posts/like/${post._id}`, token: user.token });
   };
 
   return (
@@ -208,50 +245,47 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
       </div>
 
       <div>
-  <p className='text-ascent-2'>
-  {showAll === post?._id ? post?.description : post?.description?.slice(0, 300)}
- 
+        <p className='text-ascent-2'>
+          {showAll === post?._id ? post?.description : post?.description?.slice(0, 300)}
 
-    {post?.description?.length > 301 &&
-      (showAll === post?._id ? (
-        <span
-          className='text-blue ml-2 font-mediu cursor-pointer'
-          onClick={() => setShowAll(0)}
+          {post?.description?.length > 301 &&
+            (showAll === post?._id ? (
+              <span
+                className='text-blue ml-2 font-mediu cursor-pointer'
+                onClick={() => setShowAll(0)}
+              >
+                Show Less
+              </span>
+            ) : (
+              <span
+                className='text-blue ml-2 font-medium cursor-pointer'
+                onClick={() => setShowAll(post?._id)}
+              >
+                Show More
+              </span>
+            ))}
+        </p>
+
+        {post?.image && (
+          <img
+            src={post?.image}
+            alt='post image'
+            className='w-full mt-2 rounded-lg'
+          />
+        )}
+
+        {post?.video && (
+          <video controls className="w-full mt-2 rounded-lg">
+            <source src={post?.video} type="video/mp4" />
+          </video>
+        )}
+      </div>
+
+      <div className='mt-4 flex justify-between items-center px-3 py-2 text-ascent-2 text-base border-t border-[#66666645]'>
+        <p
+          className='flex gap-2 items-center text-base cursor-pointer'
+          onClick={() => handleLike("/posts/like/" + post?._id)}
         >
-          Show Less
-        </span>
-      ) : (
-        <span
-          className='text-blue ml-2 font-medium cursor-pointer'
-          onClick={() => setShowAll(post?._id)}
-        >
-          Show More
-        </span>
-      ))}
-  </p>
-
-  {post?.image && (
-    <img
-      src={post?.image}
-      alt='post image'
-      className='w-full mt-2 rounded-lg'
-    />
-  )}
-
-  {post?.video && (
-    <video controls className="w-full mt-2 rounded-lg">
-      <source src={post?.video} type="video/mp4" />
-    </video>
-  )}
-</div>
-
-
-      <div
-        className='mt-4 flex justify-between items-center px-3 py-2 text-ascent-2
-      text-base border-t border-[#66666645]'
-      >
-        <p className='flex gap-2 items-center text-base cursor-pointer'
-        onClick={()=> handleLike("/posts/like/" +post?._id)}>
           {post?.likes?.includes(user?._id) ? (
             <BiSolidLike size={20} color='blue' />
           ) : (
@@ -274,10 +308,10 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
         {user?._id === post?.userId?._id && (
           <div
             className='flex gap-1 items-center text-base text-ascent-1 cursor-pointer'
-            onClick={() => deletePost(post?._id)}
+            onClick={() => handleDeletePost(post?._id)}
           >
-          <MdOutlineDeleteOutline size={20} />
-          <span>Delete</span>
+            <MdOutlineDeleteOutline size={20} />
+            <span>Delete</span>
           </div>
         )}
       </div>
@@ -320,8 +354,9 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
                   <p className='text-ascent-2'>{comment?.comment}</p>
 
                   <div className='mt-2 flex gap-6'>
-                    <p className='flex gap-2 items-center text-base text-ascent-2 cursor-pointer'
-                    onClick={()=> handleLike("/posts/like-comment/" + comment?._id)}
+                    <p
+                      className='flex gap-2 items-center text-base text-ascent-2 cursor-pointer'
+                      onClick={() => handleLike("/posts/like-comment/" + comment?._id)}
                     >
                       {comment?.likes?.includes(user?._id) ? (
                         <BiSolidLike size={20} color='blue' />
@@ -336,6 +371,36 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
                     >
                       Reply
                     </span>
+                    <span
+                      className="text-[#D00000] cursor-pointer"
+                      onClick={() => handleDeleteComment(comment?._id)} // Delete comment button
+                    >
+                      Delete
+                    </span>
+                    <div className="mt-2 flex gap-6">
+                  {/* Bouton pour mettre à jour le commentaire */}
+                  <span
+                    className="text-blue cursor-pointer"
+                    onClick={() => handleUpdateComment(comment?._id)}
+                  >
+                    Update
+                  </span>
+                </div>
+
+                {/* Afficher le formulaire de mise à jour du commentaire */}
+                {showUpdateCommentForm === comment?._id && (
+                  <div className="w-full mt-4 border-t border-[#66666645] pt-4">
+                    <UpdateComment
+                      initialData={updatedCommentData} // Utiliser l'ancien commentaire comme valeur initiale
+                      onSubmit={handleUpdateSubmit} // Gérer la soumission du formulaire de mise à jour
+                    />
+                  </div>
+                )}
+
+                {/* Afficher les réponses au commentaire */}
+                {/* ... */}
+              </div>
+
                   </div>
 
                   {replyComments === comment?._id && (
@@ -346,7 +411,6 @@ const PostCard = ({ post, user, deletePost, likePost }) => {
                       getComments={() => getComments(post?._id)}
                     />
                   )}
-                </div>
 
                 {/* REPLIES */}
 

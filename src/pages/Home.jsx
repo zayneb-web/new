@@ -13,7 +13,7 @@ import TopBar from "../components/TopBar";
 import FriendsCard from "../components/FriendsCard";
 import PostCard from "../components/PostCard";
 import EditProfile from "../components/EditProfile";
-import { apiRequest, fetchPosts, handleFileUpload, sendFriendRequest ,getUserInfo, likePost, deletePost} from "../utils/api";
+import { apiRequest, fetchPosts, handleFileUpload, sendFriendRequest ,getUserInfo, likePost, deletePost,updatePost,deleteComment,updateComment} from "../utils/api";
 import { UserLogin } from "../redux/userSlice";
 import {io} from 'socket.io-client';
 import { addNotification } from "../redux/notificationsSlice";
@@ -66,6 +66,30 @@ const dispatch = useDispatch();
         formState: { errors },
     } = useForm();
 
+    const handleUpdatePost = async (postId, postData) => {
+        try {
+          await updatePost(postId, user.token, postData);
+          await fetchPost();
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      const handleDeleteComment = async (commentId) => {
+        try {
+          await deleteComment(commentId, user.token);
+          await fetchPost();
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      const handleUpdateComment = async (commentId, commentData) => {
+        try {
+          await updateComment(commentId, user.token, commentData);
+          await fetchPost();
+        } catch (error) {
+          console.log(error);
+        }
+      };
     const handlePostSubmit = async (data) => {
         setPosting(true);
         setErrMsg("");
@@ -322,6 +346,9 @@ const dispatch = useDispatch();
                                     user={user}
                                     deletePost={handledelete}
                                     likePost={handlelikePost}
+                                    updatePost={handleUpdatePost} 
+                                    deleteComment={handleDeleteComment} 
+                                    updateComment={handleUpdateComment} 
                                 />
                             ))
                         ) : (
