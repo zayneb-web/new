@@ -1,0 +1,198 @@
+/* Variables */
+:root {
+    --base-height: 377px;
+    --base-dimension: 16px;
+    --base-border-radius: 12px;
+    --base-button-size: 52px;
+    --primary-color: #0360a5;
+    --accent-color: #f6f7f9;
+    --background-color: #fff;
+    --font-color: #888;
+  }
+  
+  /* Chatbox container */
+  .chatbox-container {
+    display: flex;
+    position: absolute;
+    box-shadow: 5px 5px 25px 0 rgba(46, 61, 73, 0.2);
+    flex-direction: column;
+  }
+  
+  /* Chatbox header */
+  .chatbox-header {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    padding: var(--base-dimension);
+    color: var(--background-color);
+    background-color: var(--primary-color);
+    align-items: center;
+    justify-content: space-around;
+  }
+  
+  /* Chatbox main */
+  .chatbox-main {
+    box-sizing: border-box;
+    width: 100%;
+    padding: calc(2 * var(--base-dimension)) var(--base-dimension);
+    line-height: calc(var(--base-dimension) + var(--base-dimension) / 2);
+    color: var(--font-color);
+    text-align: center;
+  }
+  
+  /* Chatbox footer */
+  .chatbox-footer {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    padding: var(--base-dimension);
+    border-top: 1px solid #ddd;
+    align-items: center;
+    justify-content: space-around;
+  }
+  
+  /* Chatbox floating button */
+  .chatbox-floating-button {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: var(--base-button-size);
+    height: var(--base-button-size);
+    color: var(--background-color);
+    background-color: var(--primary-color);
+    background-position: center center;
+    background-repeat: no-repeat;
+    box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.15);
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  /* Body */
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Lato", sans-serif;
+    background-color: var(--accent-color);
+  }
+  
+  /* Heading */
+  h1 {
+    margin: 0;
+    font-size: var(--base-dimension);
+    line-height: 1;
+  }
+  
+  /* Button */
+  button {
+    color: inherit;
+    background-color: transparent;
+    border: 0;
+    outline: 0 !important;
+    cursor: pointer;
+  }
+  
+  /* Chatbox open button */
+  button.chatbox-open {
+    @extend .chatbox-floating-button;
+    margin: var(--base-dimension);
+  }
+  
+  /* Chatbox close button */
+  button.chatbox-close {
+    @extend .chatbox-floating-button;
+    display: none;
+    margin: var(--base-dimension) calc(2 * var(--base-dimension) + var(--base-button-size)) var(--base-dimension) var(--base-dimension);
+  }
+  
+  /* Textarea */
+  textarea {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    height: calc(var(--base-dimension) + var(--base-dimension) / 2);
+    padding: 0 calc(var(--base-dimension) / 2);
+    font-family: inherit;
+    font-size: var(--base-dimension);
+    line-height: calc(var(--base-dimension) + var(--base-dimension) / 2);
+    color: var(--font-color);
+    background-color: none;
+    border: 0;
+    outline: 0 !important;
+    resize: none;
+    overflow: hidden;
+  }
+  
+  /* Textarea placeholder */
+  textarea::placeholder {
+    color: var(--font-color);
+  }
+  
+  /* Chatbox popup */
+  .chatbox-popup {
+    @extend .chatbox-container;
+    display: none;
+    bottom: calc(2 * var(--base-dimension) + var(--base-button-size));
+    right: var(--base-dimension);
+    width: var(--base-height);
+    height: auto;
+    background-color: var(--background-color);
+    border-radius: var(--base-dimension);
+  }
+  
+  /* Chatbox popup header */
+  .chatbox-popup__header {
+    @extend .chatbox-header;
+    border-top-right-radius: var(--base-border-radius);
+    border-top-left-radius: var(--base-border-radius);
+  }
+  
+  /* Chatbox popup avatar */
+  .chatbox-popup__avatar {
+    margin-top: -32px;
+    background-color: var(--primary-color);
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+  }
+  
+  /* Chatbox popup main */
+  .chatbox-popup__main {
+    @extend .chatbox-main;
+  }
+  
+  /* Chatbox popup footer */
+  .chatbox-popup__footer {
+    @extend .chatbox-footer;
+    border-bottom-right-radius: var(--base-border-radius);
+    border-bottom-left-radius: var(--base-border-radius);
+  }
+  
+  /* Chatbox panel */
+  .chatbox-panel {
+    @extend .chatbox-container;
+    display: none;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: var(--base-height);
+    background-color: var(--background-color);
+  }
+  
+  /* Chatbox panel header */
+  .chatbox-panel__header {
+    @extend .chatbox-header;
+    flex: 0 0 auto;
+  }
+  
+  /* Chatbox panel main */
+  .chatbox-panel__main {
+    @extend .chatbox-main;
+    flex: 1 1 auto;
+  }
+  
+  /* Chatbox panel footer */
+  .chatbox-panel__footer {
+    @extend .chatbox-footer;
+    flex: 0 0 auto;
+  }
+  
