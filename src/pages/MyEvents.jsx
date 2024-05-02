@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchEvents, deleteEvent } from "../utils/api"; // Import fetchEvents and deleteEvent functions
+import { fetchEvents, deleteEvent } from "../utils/api";
 import Loading from "../components/Loading";
 import TopBar from "../components/TopBar";
 import Sidebar from "../components/Sidebar";
-import EditEventForm from "../components/EditEventForm"; // Import the EditEventForm component
+import EditEventForm from "../components/EditEventForm";
 import { Link } from "react-router-dom";
 import { MdDelete, MdEdit } from 'react-icons/md';
 
@@ -12,8 +12,9 @@ const MyEvents = () => {
   const { events, status, error } = useSelector((state) => state.event);
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const [editEventId, setEditEventId] = useState(null); // State variable to track the event ID being edited
-
+  const [editEventId, setEditEventId] = useState(null);
+  const [showEditForm, setShowEditForm] = useState(false); // State variable to manage edit form visibility
+//
   useEffect(() => {
     fetchEvents(user?.token, dispatch)
       .then((data) => {
@@ -25,63 +26,92 @@ const MyEvents = () => {
   const handleDelete = (eventId) => {
     deleteEvent(user?.token, eventId, dispatch)
       .then(() => {
-        // Remove the deleted event from the events array in Redux state
         dispatch({ type: "DELETE_EVENT_SUCCESS", payload: eventId });
         console.log("Event deleted successfully!");
-        // Reload the page after successful deletion
         window.location.reload();
       })
       .catch((error) => console.log('Error deleting event:', error));
   };
 
   const handleUpdate = (eventId) => {
-    // Set the editEventId to the selected eventId
     setEditEventId(eventId);
+    setShowEditForm(true); // Show the edit form..
   };
+
+  const handleCloseEditForm = () => {
+    setShowEditForm(false); 
+  };
+
+  // Function to handle click outside event
+  const modalRef = useRef(null);
+  const handleClickOutside = (event) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+      handleCloseEditForm(); 
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <>
       <style>
         {`
-          /* CSS for Event component */
-          /* Add these styles to your existing CSS file or component */
-          /* Style for the transparent blue hover effect */
-          .bg-secondary {
-            background-color: primary; /* Default background color */
-            transition: background-color 0.3s ease; /* Smooth transition */
-          }
-          /* Hover effect */
-          .bg-secondary:hover {
-            background-color: #e6f2ff; /* Transparent blue color on hover */
-          }
-          /* Style for pagination buttons */
-          .pagination-container {
+          /* Style for the transparent background */
+          .transparent-bg {
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             justify-content: center;
-            margin-top: 20px;
+            align-items: center;
+            z-index: 999; /* Ensure it's above other elements */
           }
-          .pagination-container button {
-            margin: 0 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #fff;
+
+          /* Style for the edit form container */
+          .edit-form-container {
+            background-color: #fff; /* White background */
+            width: 400px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Shadow effect */
           }
-          .pagination-container button.active {
-            background-color: #e6f2ff; /* Active page background color */
+          .sidebar {
+            position: fixed;
+            top: 10;
+            left: 2;
+            right: 4;
+            height: 100%;
+            width: 23%; /* Adjust width as needed */
+            overflow-y: auto; /* Add scrollbar when content exceeds height */
+            background-color: #ffffff; /* Sidebar background color */
+            
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
+            padding: 20px; /* Add padding */
           }
+          /* Adjust events section to avoid overlap with sidebar */
+          .events-section {
+            margin-left: 25%; 
+            display: fixed; /* Set margin equal to the width of the sidebar */
+          }
+          
         `}
       </style>
-      <>
       <TopBar />
-
-      <div className="w-full min-h-screen bg-bgColor lg:rounded-lg overflow-hidden">
-      <div className="w-full flex gap-2 lg:gap-4 pt-2 h-full ">
-        <div className="hidden bg-white w-1/3 lg:w-1/4 h-[200px] md:flex flex-col gap-6 overflow-y-auto h-screen">
+      <div className="sidebar">
             <Sidebar />
           </div>
-          <div className='flex-1 h-full px-4 flex flex-col gap-6 overflow-y-auto rounded-lg bg-primary pb-8'>
+      <div className="w-full min-h-screen bg-bgColor lg:rounded-lg overflow-hidden">
+        <div className="w-full flex gap-2 lg:gap-4 pt-2 h-full ">
+       
+          <div className='events-section flex-1 h-full px-4 flex flex-col gap-6 overflow-y-auto rounded-lg bg-primary pb-8'>
             {status === 'loading' && <Loading />}
             {status === 'idle' && Array.isArray(events) && events.length > 0 ? (
               <div className="grid grid-cols-3 gap-4 mt-3">
@@ -96,14 +126,13 @@ const MyEvents = () => {
                         <p className="text-sm text-gray-500 mt-2">📍 {event.location}</p>
                       </div>
                     </Link>
-                    {/* Other event details */}
                     <div className="flex items-center gap-2 mt-5 justify-between">
                       <button onClick={() => handleDelete(event._id)} className="text-[#f64949fe]">
                         <MdDelete />
                       </button>
-                      <Link to={`/edit-event/${event._id}`} className="text-[#2ba150fe] block">
-                      <MdEdit />
-                      </Link>
+                      <button onClick={() => handleUpdate(event._id)} className="text-[#2ba150fe] block">
+                        <MdEdit />
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -115,12 +144,12 @@ const MyEvents = () => {
           </div>
         </div>
       </div>
-      </>
-      {editEventId && (
-        <EditEventForm
-          eventId={editEventId}
-          onClose={() => setEditEventId(null)} // Close the edit form
-        />
+      {showEditForm && (
+        <div className="transparent-bg">
+          <div ref={modalRef} className="edit-form-container">
+            <EditEventForm eventId={editEventId} onClose={handleCloseEditForm} />
+          </div>
+        </div>
       )}
     </>
   );

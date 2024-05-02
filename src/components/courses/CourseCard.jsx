@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React from 'react';
-import { MdDelete, MdEdit } from 'react-icons/md';
-import {} from '../../assets';
+import { MdDelete, MdEdit, MdVisibility } from 'react-icons/md'; // Import MdVisibility icon
+
 const CourseCard = ({
   selectCourse,
   course,
@@ -16,7 +16,7 @@ const CourseCard = ({
           className=" flex"
           src={course.imageUrl}
           alt={course.title}
-         style={{maxWidth: "100%", height: "180px"}}
+          style={{ maxWidth: '100%', height: '180px' }}
         />
       </div>
       <div className="flex flex-col justify-between p-6">
@@ -45,14 +45,12 @@ const CourseCard = ({
             </div>
           </div>
         )}
-        <button
-          className="bg-[#D00000] text-white hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-          onClick={() => {
-            selectCourse(course);
-          }}
-        >
-          See Course
-        </button>
+        {/* Replace button with just the MdVisibility icon */}
+        <MdVisibility
+          onClick={() => selectCourse(course)}
+          className="cursor-pointer text-[#D00000] hover:text-blue-600"
+          size={24}
+        />
       </div>
     </div>
   );

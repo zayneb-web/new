@@ -30,11 +30,9 @@ const UpdateCoursePage = () => {
   useEffect(() => {
     const token = localStorage.getItem('user');
     const jsonData = JSON.parse(token);
-    // formData.tags = formData.tags.split(',');
     formData.createdBy = jsonData._id;
     getCourseById(jsonData.token, id).then((res) => {
       const { title, description, price, tags, _id } = res;
-      console.log(res);
       setFormData({ title, description, price, tags: tags.join(','), _id });
     });
   }, [id]);
@@ -54,14 +52,10 @@ const UpdateCoursePage = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Implement your logic to create/update the course
     const token = localStorage.getItem('user');
-    console.log(formData);
     formData.tags = formData.tags.split(',');
     uploadFile(file);
     uploadFile(image);
-    console.log('file', file);
-    console.log('image', image);
     updateCourse(token, {
       ...formData,
       file: formData.file.name,
@@ -82,23 +76,31 @@ const UpdateCoursePage = () => {
 
   return (
     <>
+    <style>
+      {`
+      .sidebar {
+       
+        width: 20%; /* Adjust width as needed */
+       
+        padding: 10px; /* Add padding */
+      }
+
+      `}
+    </style>
       <TopBar />
-      <div className="w-full min-h-screen bg-bgColor lg:rounded-lg overflow-hidden">  
+      <div className="flex">
+          <div className="sidebar">
+            <Sidebar />
+          </div>
+          <div className="flex justify-center items-center bg-white min-h-screen w-full">
+          <div className="w-full max-w-[700px] p-8 rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold mb-4 text-center">Update Course</h2>
 
-      <div className="w-full flex gap-2 lg:gap-4 pt-2 h-full">
-        <div className="hidden bg-white w-1/3 lg:w-1/4 h-full md:flex flex-col gap-6 overflow-y-auto">
-          <Sidebar />
-        </div>
-        <div>
-          <div className="flex justify-center items-center  bg-gray-100">
-            <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w[1000px] ml-20">
-              <h2 className="text-2xl font-bold mb-4">Create Course</h2>
-
-              <div className="mb-4">
+              <div className="mb-4 mx-auto max-w-md">
                 <img
                   src="https://foundr.com/wp-content/uploads/2023/04/How-to-create-an-online-course.jpg.webp"
                   alt="Course Image"
-                  className="rounded-lg w[250px] h-64 object-cover"
+                  className="rounded-lg w-full h-auto max-h-64 object-cover"
                 />
               </div>
               <form onSubmit={handleSubmit}>
@@ -166,17 +168,17 @@ const UpdateCoursePage = () => {
                     type="text"
                     placeholder="Tags (comma separated)"
                     name="tags"
-                    // value={formData.tags.join(',')}
                     onChange={handleChange}
+                    value={formData.tags}
                     required
                   />
                 </div>
-                <div className="flex items-center justify-end">
+                <div className="flex items-center justify-center">
                   <button
                     className="bg-customColor hover:bg-[#f64949fe] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="submit"
                   >
-                    Create
+                    Update
                   </button>
                 </div>
                 {message && <h3 className="text-blue">{message} </h3>}
@@ -184,9 +186,7 @@ const UpdateCoursePage = () => {
               </form>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+       </div>
     </>
   );
 };

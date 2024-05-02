@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import { NoProfile } from "../assets";
-import { BiComment, BiLike, BiSolidLike } from "react-icons/bi";
+import { BiComment, BiLike, BiSolidLike , BiShare,BiEdit,BiTrash} from "react-icons/bi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useForm } from "react-hook-form";
 import TextInput from "./TextInput";
 import Loading from "./Loading";
 import CustomButton from "./CustomButton";
 import { apiRequest } from "../utils/api";
+
 import UpdateComment from "./UpdateComment";
+
 
 const getPostComments = async (id)=> {
   try {
@@ -155,7 +157,7 @@ const onSubmit = async (data) => {
           <CustomButton
             title='Submit'
             type='submit'
-            containerStyles='bg-[#F76566] text-white py-1 px-3 rounded-full font-semibold text-sm'
+            containerStyles='bg-[#D00000] text-white py-1 px-3 rounded-full font-semibold text-sm'
           />
         )}
       </div>
@@ -163,7 +165,9 @@ const onSubmit = async (data) => {
   );
 };
 
-const PostCard = ({ post, user, deletePost, likePost, deleteComment}) => {
+
+const PostCard = ({ post, user, deletePost, likePost, deleteComment,sharePost}) => {
+
   const [showAll, setShowAll] = useState(0);
   const [showReply, setShowReply] = useState(0);
   const [comments, setComments] = useState([]);
@@ -171,7 +175,9 @@ const PostCard = ({ post, user, deletePost, likePost, deleteComment}) => {
   const [replyComments, setReplyComments] = useState(0);
   const [showComments, setShowComments] = useState(0);
   const [editMode, setEditMode] = useState(false);
+
   const [showUpdateCommentForm, setShowUpdateCommentForm] = useState(""); 
+
   const [updatedCommentData, setUpdatedCommentData] = useState(""); 
    
   
@@ -187,6 +193,16 @@ const PostCard = ({ post, user, deletePost, likePost, deleteComment}) => {
     await getComments(post?._id);
   };
   
+
+  const handleSharePost = async () => {
+    try {
+      await sharePost(post?._id, user?._id); // Appel de la méthode sharePost avec l'ID du post et l'ID de l'utilisateur actuel
+      console.log("Post shared successfully!");
+    } catch (error) {
+      console.error("Error sharing post:", error);
+    }
+  };
+
   const handleDeletePost = async () => {
     await deletePost(post._id, user.token);
   };
@@ -195,6 +211,12 @@ const PostCard = ({ post, user, deletePost, likePost, deleteComment}) => {
     await deleteComment(commentId);
     await getComments(post?._id);
   };
+
+
+
+  const handleLikePost = async () => {
+    await likePost({ uri:` /posts/like/${post._id}`, token: user.token });
+
   const handleUpdateComment = async (commentId) => {
     try {
       const existingComment = comments.find((comment) => comment?._id === commentId);
@@ -215,6 +237,7 @@ const PostCard = ({ post, user, deletePost, likePost, deleteComment}) => {
   
   const handleLikePost = async () => {
     await likePost({ uri: `/posts/like/${post._id}`, token: user.token });
+
   };
 
   return (
@@ -314,6 +337,12 @@ const PostCard = ({ post, user, deletePost, likePost, deleteComment}) => {
             <span>Delete</span>
           </div>
         )}
+         <div
+          className='flex gap-1 items-center text-base text-ascent-1 cursor-pointer'
+          onClick={handleSharePost} // Appel de la fonction handleSharePost lors du clic sur le bouton
+        ><BiShare size={20} />
+        <span>Share</span>
+      </div>
       </div>
 
       {/* COMMENTS */}
@@ -369,8 +398,22 @@ const PostCard = ({ post, user, deletePost, likePost, deleteComment}) => {
                       className='text-blue cursor-pointer'
                       onClick={() => setReplyComments(comment?._id)}
                     >
-                      Reply
+                                                  <BiShare size={20} /> 
+
                     </span>
+                    <span
+                      className="text-[#D00000] cursor-pointer"
+                      onClick={() => handleDeleteComment(comment?._id)} // Delete comment button
+                    >
+                            <BiTrash size={20} /> 
+                    </span>
+
+                   
+
+                {/* Afficher le formulaire de mise à jour du commentaire */}
+                 
+                
+
                     <span
                       className="text-[#D00000] cursor-pointer"
                       onClick={() => handleDeleteComment(comment?._id)} // Delete comment button
@@ -399,6 +442,7 @@ const PostCard = ({ post, user, deletePost, likePost, deleteComment}) => {
 
                 {/* Afficher les réponses au commentaire */}
                 {/* ... */}
+
               </div>
 
                   </div>

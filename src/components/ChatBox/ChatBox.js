@@ -1,10 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import ReactPlayer from "react-player";
+import ReactAudioPlayer from "react-audio-player";
+import Swal from "sweetalert2";
+
 import {
   addMessage,
   getMessages,
   getUserInfo,
   getUsersForSidebar,
+  deleteChat,
+  removeMessage,
 } from "../../utils/api";
 import { format } from "timeago.js";
 import InputEmoji from "react-input-emoji";
@@ -13,6 +19,7 @@ import { addMessages } from "../../redux/chatSlice"; // Import the addMessages a
 import { NoProfile } from "../../assets";
 import { ZIM } from "zego-zim-web";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
+import { ReactMic } from "react-mic";
 export const ChatBox = ({
   chat,
   currentUser,
@@ -23,7 +30,7 @@ export const ChatBox = ({
   const [userData, setUserData] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state?.user.user);
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -31,37 +38,97 @@ export const ChatBox = ({
   const zeroCloudInstance = useRef(null);
   const [sendingVideo, setSendingVideo] = useState(false);
   const [calleeId, setCalleeId] = useState(""); // Define calleeId state
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioData, setAudioData] = useState(null);
+
   const scroll = useRef();
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const searchUsers = async () => {
+  const [chats, setChats] = useState([]);
+  const [voice, setVoice] = useState(false);
+  const [recordBlobLink, setRecordBlobLink] = useState("");
+
+
+  const handleDeleteMessage = async (messageId) => {
     try {
-      const userInfo = await getUserInfo(user?.token, searchTerm); // Call getUserInfo function to fetch user data
-      if (userInfo) {
-        setSearchResults([userInfo]); // Wrap the user data in an array and set it as search results
-      } else {
-        setSearchResults([]); // If no user found, set search results to an empty array
-      }
+      // Call the removeMessage function to delete the message
+      await removeMessage(messageId, user.token);
+      
+      // Update the messages state by filtering out the deleted message
+      setMessages(messages.filter((msg) => msg._id !== messageId));
+      console.log( messageId, "Message deleted successfully");
     } catch (error) {
-      console.log(error);
+      console.error("Error removing message:", error);
     }
   };
   
+  const handleDeleteChat = async (chatId) => {
+    try {
+      // Display a SweetAlert confirmation dialog
+      const confirmation = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
 
-  // Function to handle search button click
-  const handleSearch = () => {
-    searchUsers();
+      // Check if the user confirmed deletion
+      if (confirmation.isConfirmed) {
+        // Call the deleteChat function to delete the chat
+        const response = await deleteChat(chatId, user.token);
+
+        // Check if the deletion was successful
+        if (response.message === "Chat deleted successfully") {
+          // Remove the deleted chat from the chat list
+          setChats(chats.filter((chat) => chat._id !== chatId));
+          // Show success message
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your chat has been deleted.",
+            icon: "success",
+          });
+        } else {
+          console.log("Failed to delete chat:", response.message);
+          // Show error message
+          Swal.fire({
+            title: "Error!",
+            text: "Failed to delete chat.",
+            icon: "error",
+          });
+        }
+      }
+    } catch (error) {
+      console.log("Error deleting chat:", error);
+      // Show error message
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to delete chat.",
+        icon: "error",
+      });
+    }
   };
 
-  // Function to handle selecting a user for a new conversation
-  const handleUserSelect = (selectedUserId) => {
-    // You can perform additional actions here, such as initiating a conversation with the selected user
-    setSelectedUser(selectedUserId);
+  const onStop = (recordedBlob) => {
+    console.log("Blob URL set:", recordedBlob.blobURL);
+    setRecordBlobLink(recordedBlob.blobURL);
   };
 
+  const startHandle = () => {
+    setVoice(true);
+  };
+
+  const stopHandle = () => {
+    setVoice(false);
+  };
+
+  const clearHandle = () => {
+    setVoice(false);
+    setRecordBlobLink("");
+  };
+
+  console.log("Record Blob Link:", recordBlobLink);
   function randomID(len) {
     let result = "";
     if (result) return result;
@@ -82,8 +149,9 @@ export const ChatBox = ({
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        
         const fetchedUserData = await getUserInfo(
-          user.token,
+          user?.token,
           chat.members.find((id) => id !== currentUser)
         );
         setUserData(fetchedUserData);
@@ -169,21 +237,26 @@ export const ChatBox = ({
     }
   }, [chat, user]);
 
-
   const handleSend = async () => {
-    if (!newMessage.trim() && !selectedImage && !selectedVideo) {
+    if (
+      !newMessage.trim() &&
+      !selectedImage &&
+      !selectedVideo &&
+      !recordBlobLink
+    ) {
       // If there is no text message, no image, and no video selected, return early
       return;
     }
 
     try {
-   
       let messageData = {
         senderId: currentUser,
         chatId: chat?._id,
         text: newMessage.trim(),
         file: selectedImage ? selectedImage.name : "",
-        video: "", // Initialize video attribute as an empty string
+        video: "",
+        audio: recordBlobLink ? recordBlobLink : "",
+        attachment: selectedFile ? selectedFile.name : "",
       };
 
       if (selectedImage) {
@@ -221,7 +294,7 @@ export const ChatBox = ({
         // Update the video attribute in the message with the Cloudinary URL
         messageData.video = videoUrl;
       }
-     setSendingVideo(false);
+      setSendingVideo(false);
 
       // Emit the message data to the socket server
       const receiverId = chat.members.find((id) => id !== currentUser);
@@ -236,10 +309,10 @@ export const ChatBox = ({
       setSelectedFile(null);
       setSelectedImage(null);
       setSelectedVideo(null);
+      setRecordBlobLink("");
     } catch (error) {
       console.log("error", error);
     }
-  
   };
 
   useEffect(() => {
@@ -256,7 +329,7 @@ export const ChatBox = ({
     const file = event.target.files[0];
     console.log("file", file);
     setSelectedFile(file);
-    setNewMessage(file.name);
+    setNewMessage(file?.name);
   };
   const handleVideoChange = (event) => {
     const video = event.target.files[0];
@@ -274,65 +347,158 @@ export const ChatBox = ({
   useEffect(() => {
     scroll.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
+  const toggleRecording = () => {
+    setVoice((prevVoice) => !prevVoice);
+  };
   return (
     <>
       {chat ? (
         <>
-        
-          <div className="chat-area  ">
-              {/* Search input field */}
-     
-     
+          <div className="chat-area     ">
+            {/* Search input field */}
+
             {messages.map((message, index) => (
-              <div
-                ref={scroll}
-                key={index}
-                className={`chat ${
-                  message.senderId === currentUser ? "chat-end" : "chat-start"
-                }`}
-              >
-                <div class="chat-image avatar">
-                  
-                </div>
-                {message.file ? (
-                  // Display image if message has a file
-                  <div>
-                    <img
-                      src={message.file}
-                      alt="attachment"
-                      className="chat-image"
-                    />
-                    <span>{format(message.createdAt)}</span>
-                  </div>
-                ) : message.video ? (
-                  // Display video if message has a video
-                  <div>
-                    <video controls className="chat-video">
-                      <source src={message.video} type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
-                    <span>{format(message.createdAt)}</span>
-                  </div>
-                ) : (
-                  // Display text message if no file or video
-                  <div
-                    className={`chat-bubble ${
-                      message.senderId === currentUser
-                        ? "chat-bubble-primary"
-                        : "chat-bubble"
-                    }`}
-                  >
-                    <span>{message.text}</span>
-                    <div className="chat-msg-date">
-                      <span>{format(message.createdAt)}</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
+  <div
+    ref={scroll}
+    key={index}
+    className={`chat ${
+      message.senderId === currentUser ? "chat-end" : "chat-start"
+    }`}
+  >
+    <div className="message-container">
+      {message.audio && !message.video ? (
+        // Display audio message using ReactPlayer
+        <div className="media-container">
+          <ReactPlayer
+            url={message.audio}
+            controls
+            width="100%"
+            height="auto"
+            config={{
+              file: {
+                attributes: {
+                  controlsList: "nodownload", // Optional: hide download button
+                },
+              },
+              // Specify the MIME type of the audio for proper playback
+              tracks: [
+                {
+                  kind: "captions",
+                  src: message.audio,
+                  srcLang: "en",
+                  type: "audio/mp3",
+                },
+              ],
+            }}
+          />
+          <span>{format(message.createdAt)}</span>
+        </div>
+      ) : message.video ? (
+        // Display video message using native video element
+        <div className="media-container">
+          <video controls className="chat-video">
+            <source src={message.video} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <span>{format(message.createdAt)}</span>
+        </div>
+      ) : message.file ? (
+        // Display image if message has a file
+        <div>
+          <img
+            src={message.file}
+            alt="attachment"
+            className="chat-image"
+          />
+          <span>{format(message.createdAt)}</span>
+        </div>
+      ) : (
+        // Display text message if no file or media
+        <div
+          className={`chat-bubble ${
+            message.senderId === currentUser
+              ? "chat-bubble-primary"
+              : "chat-bubble"
+          }`}
+        >
+          <span>{message.text}</span>
+          <div className="chat-msg-date">
+            <span>{format(message.createdAt)}</span>
+          </div>
+        </div>
+      )}
+    </div>
+    {/* Render dropdown button only for sender's messages */}
+    {message.senderId === currentUser && (
+      <div className="dropdown dropdown-top dropdown-end">
+        <div tabIndex="0" role="button" className="btn m-1 p-1">
+          <svg
+            className="w-4 h-4"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 4 15"
+          >
+            <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
+          </svg>
+        </div>
+        <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+          {/* Pass the messageId to the handleDeleteMessage function */}
+          <li>
+            <a onClick={() => handleDeleteMessage(message._id)}>remove</a>
+          </li>
+        </ul>
+      </div>
+    )}
+  </div>
+
+
+
+))}
 
             <div className="chat-area-footer">
+              <div></div>
+
+              <div className="vocal-container">
+                <input
+                  type="audio"
+                  onChange={startHandle}
+                  style={{ display: "none" }}
+                />
+                <button className="vocal-button" onClick={toggleRecording}>
+                  <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                  <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                  <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                  <lord-icon
+                    src="https://cdn.lordicon.com/jibstvae.json"
+                    trigger="hover"
+                    colors={
+                      voice
+                        ? "primary:#5c0e0a,secondary:#5c0e0a"
+                        : "primary:#545454,secondary:#545454"
+                    }
+                  ></lord-icon>
+                </button>
+
+                <div className="flex items-center">
+                  <div
+                    style={{
+                      position: "relative",
+                      borderRadius: "25px",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <ReactMic
+                      record={voice}
+                      className="w-full  react-mic-hidden"
+                      onStop={onStop}
+                      strokeColor="#0a0a0a"
+                      backgroundColor="#a6a2a2"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div className="file-upload-container">
                 <input
                   type="file"
@@ -418,13 +584,12 @@ export const ChatBox = ({
               </div>
               <InputEmoji value={newMessage} onChange={setNewMessage} />
               <div className="btn btn-sm btn-primary" onClick={handleSend}>
-  {sendingVideo ? ( // Render loading indicator if sendingVideo is true
-    <span className="loading loading-spinner"></span>
-  ) : (
-    "Send"
-  )}
-</div>
-
+                {sendingVideo ? ( // Render loading indicator if sendingVideo is true
+                  <span className="loading loading-spinner"></span>
+                ) : (
+                  "Send"
+                )}
+              </div>
             </div>
           </div>
 
@@ -440,19 +605,23 @@ export const ChatBox = ({
                   strokeLinejoin="round"
                   className="css-i6dzq1"
                 >
-                    <path d="M12 2l10 6.5v7L12 22 2 15.5v-7L12 2zM12 22v-6.5" />
-                    <path d="M22 8.5l-10 7-10-7" />
-                    <path d="M2 15.5l10-7 10 7M12 2v6.5" />
-                  </svg>
+                  <path d="M12 2l10 6.5v7L12 22 2 15.5v-7L12 2zM12 22v-6.5" />
+                  <path d="M22 8.5l-10 7-10-7" />
+                  <path d="M2 15.5l10-7 10 7M12 2v6.5" />
+                </svg>
               </div>
-              <div className="detail-title"> {userData?.firstName} {userData?.lastName} </div>
-             
-             
+              <div className="detail-title">
+                {" "}
+                {userData?.firstName} {userData?.lastName}{" "}
+              </div>
 
               <div className="detail-buttons">
-                <button className="detail-button"   onClick={() =>
+                <button
+                  className="detail-button"
+                  onClick={() =>
                     handleSendcall(ZegoUIKitPrebuilt.InvitationTypeVideoCall)
-                  }>
+                  }
+                >
                   <svg
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
@@ -467,9 +636,12 @@ export const ChatBox = ({
                   </svg>
                   Voice call
                 </button>
-                <button className="detail-button"  onClick={() =>
+                <button
+                  className="detail-button"
+                  onClick={() =>
                     handleSendcall(ZegoUIKitPrebuilt.InvitationTypeVoiceCall)
-                  }>
+                  }
+                >
                   <svg
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
@@ -485,7 +657,6 @@ export const ChatBox = ({
                   </svg>
                   Video call
                 </button>
-               
               </div>
             </div>
             <div className="detail-photos">
@@ -506,12 +677,19 @@ export const ChatBox = ({
                 </svg>
                 Shared photos
               </div>
+
               <div className="detail-photo-grid">
                 <img src="https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2168&q=80" />
                 <img src="https://images.unsplash.com/photo-1516085216930-c93a002a8b01?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80" />
                 <img src="https://images.unsplash.com/photo-1458819714733-e5ab3d536722?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=933&q=80" />
               </div>
             </div>
+            <button
+              onClick={() => handleDeleteChat(chat._id)}
+              className="btn btn-block"
+            >
+              Delete Conversation
+            </button>
           </div>
         </>
       ) : (

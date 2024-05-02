@@ -17,6 +17,12 @@ import { SiGooglemeet } from "react-icons/si";
 import Video from "../pages/Video"
 
 import { searchEvents } from "../utils/api"; // Import the searchEvents function
+import { IoCalendarNumberOutline } from "react-icons/io5";
+import EventCalendar from "./EventCalendar";
+
+
+
+
 const linkData = [
 
   {
@@ -29,7 +35,7 @@ const linkData = [
     link: "/MyEvents",
     icon: <FaUser />,
   },
- 
+  
   
 ];
 
@@ -58,9 +64,7 @@ const Sidebar = ({ setSearchedEvent }) => {
   };
   
 
-  const closeSidebar = () => {
-    dispatch(setOpenSidebar(false));
-  };
+  const closeSidebar = () => {};
 
   const [showAddEvent, setShowAddEvent] = useState(false); // State variable to manage AddEvent form visibility
 
@@ -95,8 +99,8 @@ const Sidebar = ({ setSearchedEvent }) => {
       </div>
 
         {/* Search Input */}
-        <div className="w-64 2xl:w-[400px] flex items-center py-2 px-3 gap-2 rounded-full bg-[#f3f4f6]">
-          <MdOutlineSearch className="text-gray-500 text-xl" />
+        <div className="w-64 2xl:w-[300px] flex items-center py-2 px-3 gap-2 rounded-full bg-[#f3f4f6]">
+          
           <input
             type="text"
             placeholder="Search...."
@@ -105,7 +109,7 @@ const Sidebar = ({ setSearchedEvent }) => {
             className="flex-1 outline-none bg-transparent placeholder:text-gray-500 text-gray-800"
           />
           <button onClick={handleSearch} className="text-gray-800 font-semibold">
-            Search
+          <MdOutlineSearch className="text-gray-500 text-xl" />
           </button>
         </div>
 
@@ -129,6 +133,11 @@ const Sidebar = ({ setSearchedEvent }) => {
       <SiGooglemeet style={{ marginRight: '5px' }}/> {/* Adjust styling as needed */}
       <Link to="/VideoPage" style={{ textDecoration: 'none', color: 'inherit', marginRight: '5px' }}>Meet</Link>
     </div>
+    <div className="item-center mr-8 px-3" style={{ display: 'flex', alignItems: 'center' }}>
+      <IoCalendarNumberOutline style={{ marginRight: '5px' }}/> {/* Adjust styling as needed */}
+      <Link to="/calendar" style={{ textDecoration: 'none', color: 'inherit', marginRight: '5px' }}>Calendar</Link>
+    </div>
+
 <div className=''>
 
           <button
@@ -149,3 +158,4 @@ const Sidebar = ({ setSearchedEvent }) => {
 };
 
 export default Sidebar;
+//

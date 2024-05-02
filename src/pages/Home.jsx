@@ -13,7 +13,9 @@ import TopBar from "../components/TopBar";
 import FriendsCard from "../components/FriendsCard";
 import PostCard from "../components/PostCard";
 import EditProfile from "../components/EditProfile";
-import { apiRequest, fetchPosts, handleFileUpload, sendFriendRequest ,getUserInfo, likePost, deletePost,updatePost,deleteComment,updateComment} from "../utils/api";
+
+import { apiRequest, fetchPosts, handleFileUpload, sendFriendRequest ,getUserInfo, likePost, deletePost,updatePost,deleteComment,updateComment,sharePost} from "../utils/api";
+
 import { UserLogin } from "../redux/userSlice";
 import {io} from 'socket.io-client';
 import { addNotification } from "../redux/notificationsSlice";
@@ -168,28 +170,46 @@ const dispatch = useDispatch();
             console.log(error);
         }
     };
-    const fetchSuggestedFriends = async()=>{
-        try{
+    const fetchSuggestedFriends = async () => {
+        try {
             const res = await apiRequest({
-                url:"/users/suggested-friends",
+                url: "/users/suggested-friends",
                 token: user?.token,
-                method:"POST",
+                method: "POST",
             });
-            setSuggestedFriends(res?.data);
-        }catch(error){
+
+            if (res?.data) {
+                const filteredSuggestions = filterSuggestedFriends(res?.data, user?.friends);
+                setSuggestedFriends(filteredSuggestions);
+            }
+        } catch (error) {
             console.log(error);
         }
     };
-    const handleFriendRequest = async(friendId)=>{
-        try{
-            const res = await sendFriendRequest(user.token,friendId);
-            await fetchSuggestedFriends();
-            socketRef.current.emit('Send-friend-request', { userId: user._id, friendId });
 
-        console.log('Sent friend request to userId:', friendId);
-    } catch (error) {
-        console.log(error);
-    }}
+    const filterSuggestedFriends = (suggestions, userFriends) => {
+        return suggestions.filter((friend) => {
+            // Vérifie si l'ID de l'ami n'est pas dans la liste des amis de l'utilisateur
+            return !userFriends.some((userFriend) => userFriend._id === friend._id);
+        });
+    };
+    
+    const handleFriendRequest = async (friendId) => {
+        try {
+            const res = await sendFriendRequest(user.token, friendId);
+            await fetchSuggestedFriends(); // Met à jour la liste des amis suggérés
+            socketRef.current.emit('Send-friend-request', { userId: user._id, friendId });
+    
+            // Supprime l'ami de la liste des suggestions
+            setSuggestedFriends(suggestedFriends.filter((friend) => friend._id !== friendId));
+    
+            console.log('Sent friend request to userId:', friendId);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    
+    
     const acceptFriendRequest = async(id,status)=>{
         try{
             const res = await apiRequest({
@@ -211,6 +231,25 @@ const dispatch = useDispatch();
         dispatch(UserLogin(newData));
     };
 
+    const handleSharePost = async (postId, shareWithUserId) => {
+        try {
+          const res = await apiRequest({
+            url: "posts/share",
+            token: user.token,
+            method: 'POST',
+            data: {
+              postId: postId,
+              shareWith: shareWithUserId,
+            },
+          });
+          console.log('Post shared successfully:', res);
+          await fetchPosts(user?.token, dispatch);
+        } catch (error) {
+          console.error('Error sharing post:', error);
+          throw error;
+        }
+      };
+
 
     useEffect(()=>{
         setLoading(true);
@@ -230,9 +269,6 @@ const dispatch = useDispatch();
                     <div className='hidden w-1/3 lg:w-1/4 h-full md:flex flex-col gap-6 overflow-y-auto'>
                         <ProfileCard user={user} />
                         <FriendsCard friends={user?.friends} />
-                        <Link to="/dashboard/admin">
-          Go to Dashboard Admin
-        </Link>
                     </div>
 
                     {/* CENTER */}
@@ -349,6 +385,9 @@ const dispatch = useDispatch();
                                     updatePost={handleUpdatePost} 
                                     deleteComment={handleDeleteComment} 
                                     updateComment={handleUpdateComment} 
+
+                                    sharePost={handleSharePost}
+
                                 />
                             ))
                         ) : (
