@@ -21,7 +21,7 @@ import Groupecard from "./components/Groupecard.jsx"
 
 import Chat from "./pages/Chat/Chat.js";
 import VideoCall from "./components/VideoCall.js";
-
+//import VideoCall from "./components/VideoCall.js";
 
 //navigate between pages  
 function Layout() {
