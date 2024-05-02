@@ -160,6 +160,53 @@ export const deletePost=async(id,token)=>{
 
     }
 };
+export const updatePost = async (id, token, postData) => {
+  try {
+      const res = await apiRequest({
+          url: "/posts/" + id,
+          token: token,
+          method: "PUT",
+          data: postData,
+      });
+      return res;
+  } catch (error) {
+      console.error("An error occurred:", error);
+      console.log("Error details:", error.response);
+      // Gérer l'erreur ici selon vos besoins
+  }
+};
+     /////*******************Comments********************/////
+export const deleteComment = async (id, token) => {
+  try {
+      const res = await apiRequest({
+          url: "/posts/delete-comment/" + id,
+          token: token,
+          method: "DELETE",
+      });
+      return res;
+  } catch (error) {
+      console.error("An error occurred:", error);
+      console.log("Error details:", error.response);
+  }
+};
+export const updateComment = async (id, token, commentData) => {
+  try {
+    const res = await apiRequest({
+      url: "/posts/update-comment/" + id,
+      token: token,
+      method: "PUT",
+      data: commentData,
+    });
+    return res;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    if (error.response) {
+      console.log("Error response:", error.response.data);
+    }
+    throw error; // Rethrow the error to handle it in the calling function
+  }
+};
+
 export const getUserInfo = async(token, id) => {
 
     try {

@@ -13,7 +13,9 @@ import TopBar from "../components/TopBar";
 import FriendsCard from "../components/FriendsCard";
 import PostCard from "../components/PostCard";
 import EditProfile from "../components/EditProfile";
+
 import { apiRequest, fetchPosts, handleFileUpload, sendFriendRequest ,getUserInfo, likePost, deletePost,updatePost,deleteComment,updateComment,sharePost} from "../utils/api";
+
 import { UserLogin } from "../redux/userSlice";
 import {io} from 'socket.io-client';
 import { addNotification } from "../redux/notificationsSlice";
@@ -383,7 +385,9 @@ const dispatch = useDispatch();
                                     updatePost={handleUpdatePost} 
                                     deleteComment={handleDeleteComment} 
                                     updateComment={handleUpdateComment} 
+
                                     sharePost={handleSharePost}
+
                                 />
                             ))
                         ) : (

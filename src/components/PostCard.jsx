@@ -10,6 +10,9 @@ import Loading from "./Loading";
 import CustomButton from "./CustomButton";
 import { apiRequest } from "../utils/api";
 
+import UpdateComment from "./UpdateComment";
+
+
 const getPostComments = async (id)=> {
   try {
     const res = await apiRequest({
@@ -162,7 +165,9 @@ const onSubmit = async (data) => {
   );
 };
 
+
 const PostCard = ({ post, user, deletePost, likePost, deleteComment,sharePost}) => {
+
   const [showAll, setShowAll] = useState(0);
   const [showReply, setShowReply] = useState(0);
   const [comments, setComments] = useState([]);
@@ -170,6 +175,9 @@ const PostCard = ({ post, user, deletePost, likePost, deleteComment,sharePost}) 
   const [replyComments, setReplyComments] = useState(0);
   const [showComments, setShowComments] = useState(0);
   const [editMode, setEditMode] = useState(false);
+
+  const [showUpdateCommentForm, setShowUpdateCommentForm] = useState(""); 
+
   const [updatedCommentData, setUpdatedCommentData] = useState(""); 
    
   
@@ -185,6 +193,7 @@ const PostCard = ({ post, user, deletePost, likePost, deleteComment,sharePost}) 
     await getComments(post?._id);
   };
   
+
   const handleSharePost = async () => {
     try {
       await sharePost(post?._id, user?._id); // Appel de la méthode sharePost avec l'ID du post et l'ID de l'utilisateur actuel
@@ -204,8 +213,31 @@ const PostCard = ({ post, user, deletePost, likePost, deleteComment,sharePost}) 
   };
 
 
+
   const handleLikePost = async () => {
     await likePost({ uri:` /posts/like/${post._id}`, token: user.token });
+
+  const handleUpdateComment = async (commentId) => {
+    try {
+      const existingComment = comments.find((comment) => comment?._id === commentId);
+      if (!existingComment) {
+        console.log("Comment not found");
+        return;
+      }
+      setUpdatedCommentData(existingComment.comment);
+      setShowUpdateCommentForm(commentId); 
+      } catch (error) {
+      console.log("Error updating comment:", error);
+    }
+  };
+  const handleUpdateSubmit = async (data) => {
+    console.log("Updated comment data:", data);
+    setShowUpdateCommentForm(""); // Cacher le formulaire de mise à jour après la soumission
+  };
+  
+  const handleLikePost = async () => {
+    await likePost({ uri: `/posts/like/${post._id}`, token: user.token });
+
   };
 
   return (
@@ -375,11 +407,42 @@ const PostCard = ({ post, user, deletePost, likePost, deleteComment,sharePost}) 
                     >
                             <BiTrash size={20} /> 
                     </span>
+
                    
 
                 {/* Afficher le formulaire de mise à jour du commentaire */}
                  
                 
+
+                    <span
+                      className="text-[#D00000] cursor-pointer"
+                      onClick={() => handleDeleteComment(comment?._id)} // Delete comment button
+                    >
+                      Delete
+                    </span>
+                    <div className="mt-2 flex gap-6">
+                  {/* Bouton pour mettre à jour le commentaire */}
+                  <span
+                    className="text-blue cursor-pointer"
+                    onClick={() => handleUpdateComment(comment?._id)}
+                  >
+                    Update
+                  </span>
+                </div>
+
+                {/* Afficher le formulaire de mise à jour du commentaire */}
+                {showUpdateCommentForm === comment?._id && (
+                  <div className="w-full mt-4 border-t border-[#66666645] pt-4">
+                    <UpdateComment
+                      initialData={updatedCommentData} // Utiliser l'ancien commentaire comme valeur initiale
+                      onSubmit={handleUpdateSubmit} // Gérer la soumission du formulaire de mise à jour
+                    />
+                  </div>
+                )}
+
+                {/* Afficher les réponses au commentaire */}
+                {/* ... */}
+
               </div>
 
                   </div>
