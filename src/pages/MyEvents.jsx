@@ -14,7 +14,7 @@ const MyEvents = () => {
   const dispatch = useDispatch();
   const [editEventId, setEditEventId] = useState(null);
   const [showEditForm, setShowEditForm] = useState(false); // State variable to manage edit form visibility
-
+//
   useEffect(() => {
     fetchEvents(user?.token, dispatch)
       .then((data) => {
@@ -39,14 +39,14 @@ const MyEvents = () => {
   };
 
   const handleCloseEditForm = () => {
-    setShowEditForm(false); // Close the edit form
+    setShowEditForm(false); 
   };
 
   // Function to handle click outside event
   const modalRef = useRef(null);
   const handleClickOutside = (event) => {
     if (modalRef.current && !modalRef.current.contains(event.target)) {
-      handleCloseEditForm(); // Close the edit form when clicking outside of it
+      handleCloseEditForm(); 
     }
   };
 

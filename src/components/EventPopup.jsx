@@ -1,4 +1,4 @@
-// EventPopup.js
+// EventPopup.js window
 const EventPopup = ({ event, onDelete, onClose }) => {
     return (
         <>

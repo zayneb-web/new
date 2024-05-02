@@ -341,7 +341,7 @@ export const updateEvent = async (token, data, dispatch) => {
     });
     // Dispatch action for successful update if needed
     dispatch({ type: "UPDATE_EVENT_SUCCESS", payload: response.data });
-    return response.data; // Return updated event data if needed
+    return response.data; 
   } catch (error) {
     console.log('Error updating event:', error);
     throw error; // Throw the error for handling in the component
@@ -350,21 +350,7 @@ export const updateEvent = async (token, data, dispatch) => {
 
 
 
-/*export const updateEvent = async (token, data) => {
-  console.log(data);
-  try {
-    const res = await apiRequest({
-      url: '/event/updateevent/' + data._id,
-      token: token,
-      method: 'PUT',
-      data: data,
-    });
-    return res;
-  } catch (error) {
-    console.log(error);
-  }
-};
-*/
+
 
 export const addcourse = async (token, data) => {
   try {
@@ -619,7 +605,7 @@ export const updateComment = async (id, token, commentData) => {
     throw error; // Rethrow the error to handle it in the calling function
   }
 };
-
+//eya
 export const likeEvent = async (eventId, token) => {
   try {
     const res = await apiRequest({

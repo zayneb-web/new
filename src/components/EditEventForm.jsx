@@ -15,7 +15,7 @@ const EditEventForm = ({ onClose, eventId }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [token, setToken] = useState('');
   
-  // Define tagsInputRef, addTag, tags, removeTag, guestsInputRef, addGuest, guests
+  // Define tagsInputRef, addTag, tags, removeTag, guestsInputRef, addGuest
   const tagsInputRef = useRef(null);
   const guestsInputRef = useRef(null);
   const [tags, setTags] = useState([]);

@@ -158,3 +158,4 @@ const Sidebar = ({ setSearchedEvent }) => {
 };
 
 export default Sidebar;
+//

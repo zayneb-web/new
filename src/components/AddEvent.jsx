@@ -21,7 +21,7 @@ const useOutsideClick = (ref, callback) => {
     };
   }, [ref, callback]);
 };
-
+//
 const CreateEvent = ({ onClose }) => {
   const [errMsg, setErrMsg] = useState('');
   const { user } = useSelector((state) => state.user);

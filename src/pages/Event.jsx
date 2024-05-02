@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchEvents, likeEvent as likeEventAPI } from "../utils/api"; // Import the likeEvent API function
+import { fetchEvents, likeEvent as likeEventAPI } from "../utils/api"; 
 import Loading from "../components/Loading";
 import TopBar from "../components/TopBar";
 import Sidebar from "../components/Sidebar";
 import { BiLike, BiSolidLike } from "react-icons/bi";
-import axios from "axios"; // Import Axios
+import axios from "axios"; 
 
 const Event = ({ searchResults }) => {
   const { events, status, error } = useSelector((state) => state.event);
@@ -140,6 +140,7 @@ const Event = ({ searchResults }) => {
             font-size: 20px; /* Larger font size */
             width: 100%; /* Take full width */
           }
+
         `}
       </style>
       <TopBar />

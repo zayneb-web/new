@@ -62,7 +62,7 @@ function EventCalendar() {
     setSelectedEvent({ ...event, x: e.pageX, y: e.pageY });
   };
   
-  // Implementing onClose function to close the popup
+  // Implementing onClose function to close the Popup
   const handleClosePopup = () => {
     setSelectedEvent(null);
   };

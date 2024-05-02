@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Row, Col } from "react-bootstrap";
 import Iframe from 'react-iframe';
 import '../../src/index.css';
-
+//footer
 const Footer = () => {
   return (
     <div className='footer'>
