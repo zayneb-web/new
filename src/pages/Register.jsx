@@ -20,6 +20,7 @@ const Register = () => {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [image, setImage] = useState(null);
   const dispatch = useDispatch();
+  //States
   const {
     register,
     handleSubmit,
