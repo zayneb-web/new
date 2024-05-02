@@ -35,7 +35,7 @@ const MyEvents = () => {
 
   const handleUpdate = (eventId) => {
     setEditEventId(eventId);
-    setShowEditForm(true); // Show the edit form
+    setShowEditForm(true); // Show the edit form..
   };
 
   const handleCloseEditForm = () => {

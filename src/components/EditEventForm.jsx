@@ -54,7 +54,6 @@ const EditEventForm = ({ onClose, eventId }) => {
   const addTag = () => {
     const tagValue = tagsInputRef.current.value.trim();
     if (tagValue) {
-      // Generate a random color for the tag
       const tagColor = getRandomColor();
       setTags([...tags, { value: tagValue, color: tagColor }]);
       tagsInputRef.current.value = '';

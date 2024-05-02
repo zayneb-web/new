@@ -39,7 +39,7 @@ const Event = ({ searchResults }) => {
           Authorization: `Bearer ${user.token}`,
         },
       });
-      // Refetch events after liking an event to get the latest data
+      // Refetch events after liking an event to get the latest data..
       fetchEvents(user.token, dispatch)
         .then((data) => {
           dispatch({ type: "FETCH_EVENTS_SUCCESS", payload: data });
