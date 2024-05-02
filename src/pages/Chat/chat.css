@@ -828,3 +828,20 @@ bottom: 50%;
   max-width: 200px; /* Adjust the maximum width of the video */
   border-radius: 10px; /* Adjust the border radius as needed */
 }
+.media-container {
+  margin-top: 10px; /* Adjust margin as needed */
+  max-width: 100%; /* Ensure media player fits within chat area */
+}
+
+
+.ReactPlayer {
+  width: 100%; /* Make sure the video/audio player takes full width */
+  height: auto; /* Maintain aspect ratio */
+}
+.react-mic-visible {
+  display: block;
+}
+/* Default display is set to none */
+.react-mic-hidden {
+  display: none;
+}

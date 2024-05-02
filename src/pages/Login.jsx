@@ -8,6 +8,7 @@ import { BsShare } from "react-icons/bs";
 import { AiOutlineInteraction } from "react-icons/ai";
 import { ImConnection } from "react-icons/im";
 import CustomButton from "../components/CustomButton"
+import GoogleButtom from "../components/GoogleButtom.jsx"
 import { BgImage } from "../assets";
 import { apiRequest } from "../utils/api";
 import { UserLogin } from "../redux/userSlice";
@@ -60,6 +61,9 @@ const Login = () => {
 
     }
 
+  };
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:5000/auth/auth/google"; // Redirects to Google authentication route
   };
 
   return (
@@ -143,7 +147,15 @@ const Login = () => {
                 title='Login'
               />
             )}
-          </form>
+              {/* New Google authentication button */}</form>
+          <GoogleButtom
+                type='submit'
+                containerStyles={`inline-flex justify-center rounded-md googleColor px-8 py-3 text-sm font-medium text-white outline-none`}
+                onClick={handleGoogleLogin}
+
+                title=' Login with Google'
+              />
+      
 
           <p className='text-ascent-2 text-sm text-center'>
             Don't have an account?

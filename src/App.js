@@ -15,11 +15,14 @@ import MyCourse from './pages/MyCourse';
 import AllCourse from './pages/AllCourse';
 import UpdateCoursePage from './components/courses/UpdateCourse';
 import TasksList from './components/tasks/TasksList';
+import EventCalendar from './components/EventCalendar.js'
 
 
 
 import Chat from "./pages/Chat/Chat.js";
 import VideoCall from "./components/VideoCall.js";
+import Cancel from './components/Cancel';
+import Success from './components/Success';
 
 
 //navigate between pages  
@@ -30,6 +33,7 @@ function Layout() {
   //useLocation est utilisé pour obtenir l'entrée actuelle qui représente l'URL où l'application est actuellement rendue.
   const location = useLocation();
 //for securtiy if the user have a token then he will have the access to all the pages (outled) sinon login
+
   return user?.token ? (
     <Outlet />
   ) : (
@@ -60,7 +64,8 @@ function App() {
 
          
         </Route>
-
+        <Route path="/success" element={<Success/>}/>
+        <Route path="/cancel" element={<Cancel/>}/>
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
         <Route path='/reset-password' element={<ResetPassword />} />
@@ -71,10 +76,12 @@ function App() {
         <Route path='/event/:id' element={<SingleEvent />} />
         <Route path='/myevents' element={<MyEvents/>} />
         <Route path='/edit-event/:id' element={<EditEventForm />} />
+        <Route path="calendar" element={ <EventCalendar/> } />
+
         
 
 
-        <Route path='/chat' element={<Chat />} />
+       <Route path='/chat' element={<Chat />} />
         <Route path='/video' element={<VideoCall />} />
      
 

@@ -149,4 +149,171 @@ z-index: 49;
 .hover\:bg-bgColor:hover {
   background-color: var(--color-bg); /* Custom background color */
 }
+.googleColor {
+  background-color: #ff5722; /* Google's blue color */
+}
+}
+// Below is the CSS code
+
+.footer {
+  padding: 70px 0px 30px 0px;
+  margin-top: 200px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 20px 20px 0 0;
+}
+
+.footer .container .main-foot .col .main-title {
+  font-weight: bold;
+}
+
+.footer .container .main-foot .col ul li h5 {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.footer .container .main-foot .col ul li a {
+  text-decoration: none;
+  color: rgb(113, 170, 255);
+  font-size: 16px;
+  transition: all .4s ease;
+}
+
+.footer .container .main-foot .col ul li a:hover {
+  color: rgb(84, 85, 87);
+  margin-left: 3px;
+}
+
+.footer .container .main-foot .col ul li .map iframe {
+  width: 100%;
+  height: 150px;
+  -webkit-box-shadow: 3px 3px 10px 3px #dddddd;
+  -moz-box-shadow: 3px 3px 10px 3px #dddddd;
+  box-shadow: 3px 3px 10px 3px #dddddd;
+  transition: all .5s ease;
+}
+
+.footer .container .main-foot .col ul li .map iframe:hover {
+  -webkit-box-shadow: 1px 1px 3px 1px #dddddd;
+  -moz-box-shadow: 1px 1px 3px 1px #dddddd;
+  box-shadow: 1px 1px 3px 1px #dddddd;
+}
+
+
+.footer .container .bott-foot .copy {
+  color: rgb(153, 153, 153);
+  font-size: 16px;
+}
+
+.footer .container .bott-foot .design {
+  color: rgb(117, 117, 117);
+  font-size: 16px;
+  font-weight: bold;
+}
+
+
+@media (max-width:768px) {
+
+  .footer .container .main-foot .col .main-title {
+    font-weight: bold;
+  }
+  
+  .footer .container .main-foot .col ul li h5 {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .footer .container .main-foot .col ul li a {
+    text-decoration: none;
+    color: rgb(113, 170, 255);
+    font-size: 15px;
+    transition: all .4s ease;
+  }
+
+  .footer .container .main-foot .col ul li a:hover {
+    color: rgb(84, 85, 87);
+    margin-left: 3px;
+  }
+  
+  
+  .footer .container .main-foot .col ul li .map iframe {
+    width: 92%;
+    height: 150px;
+    -webkit-box-shadow: 3px 3px 10px 3px #dddddd;
+    -moz-box-shadow: 3px 3px 10px 3px #dddddd;
+    box-shadow: 3px 3px 10px 3px #dddddd;
+    transition: all .5s ease;
+  }
+  
+  .footer .container .main-foot .col ul li .map iframe:hover {
+    -webkit-box-shadow: 1px 1px 3px 1px #dddddd;
+    -moz-box-shadow: 1px 1px 3px 1px #dddddd;
+    box-shadow: 1px 1px 3px 1px #dddddd;
+  }
+  
+
+  .footer .container .bott-foot .copy {
+    color: rgb(153, 153, 153);
+    font-size: 17px;
+  }
+  
+  .footer .container .bott-foot .design {
+    color: rgb(117, 117, 117);
+    font-size: 17px;
+    font-weight: bold;
+  }
+
+}
+
+
+
+@media (max-width:450px) {
+
+  .footer .container .main-foot .col .main-title {
+    font-weight: bold;
+  }
+  
+  .footer .container .main-foot .col ul li h5 {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .footer .container .main-foot .col ul li a {
+    text-decoration: none;
+    color: rgb(113, 170, 255);
+    font-size: 16px;
+    transition: all .4s ease;
+  }
+
+  .footer .container .main-foot .col ul li a:hover {
+    color: rgb(84, 85, 87);
+    margin-left: 3px;
+  }
+  
+  
+  .footer .container .main-foot .col ul li .map iframe {
+    width: 90%;
+    height: 150px;
+    -webkit-box-shadow: 3px 3px 10px 3px #dddddd;
+    -moz-box-shadow: 3px 3px 10px 3px #dddddd;
+    box-shadow: 3px 3px 10px 3px #dddddd;
+    transition: all .5s ease;
+  }
+  
+  .footer .container .main-foot .col ul li .map iframe:hover {
+    -webkit-box-shadow: 1px 1px 3px 1px #dddddd;
+    -moz-box-shadow: 1px 1px 3px 1px #dddddd;
+    box-shadow: 1px 1px 3px 1px #dddddd;
+  }
+  
+
+  .footer .container .bott-foot .copy {
+    color: rgb(153, 153, 153);
+    font-size: 16px;
+  }
+  
+  .footer .container .bott-foot .design {
+    color: rgb(117, 117, 117);
+    font-size: 16px;
+    font-weight: bold;
+  }
 }

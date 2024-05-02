@@ -35,10 +35,12 @@ export const postEvent = createAsyncThunk(
     }
   }
 );
+
 export const updateEvent = createAsyncThunk(
   'event/updateEvent',
-  async ({ token, eventId, eventData }, { rejectWithValue }) => {
+  async ({ eventId, eventData }, { getState, rejectWithValue }) => {
     try {
+      const { token } = getState().auth; // Assuming you have an auth slice with a token
       const response = await updateEventAPI(token, eventId, eventData);
       return response.data; // Assuming the API returns updated event data
     } catch (error) {
@@ -56,9 +58,6 @@ const eventSlice = createSlice({
     },
     getEvent(state, action) {
       state.events[action.payload] = action.payload;
-    },
-    updateEvent(state, action) {
-      state.events[action.payload.id] = action.payload;
     },
     deleteEventSuccess(state, action) {
       state.status = 'idle';
