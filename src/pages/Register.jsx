@@ -42,8 +42,8 @@ const Register = () => {
           setErrMsg(res);
         }else {
           setErrMsg(res);
-          setInterval(()=>{
-            window.location.replace("/login"); },3000);
+          // setInterval(()=>{
+          //   window.location.replace("/login"); },3000);
           
         }
         setIsSubmitting(false);
@@ -68,12 +68,12 @@ const Register = () => {
               <TbSocial />
             </div>
             <span className='text-2xl text-[#d8066f] font-semibold' >
-              BETTER CALL US
+              BETTER CALL US🔥
             </span>
           </div>
 
           <p className='text-ascent-1 text-base font-semibold'>
-            Create your account
+            Create your account💼
           </p>
 
           <form

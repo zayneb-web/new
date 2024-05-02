@@ -61,8 +61,10 @@ const TasksList = () => {
   };
 
   return (
+    <>
+    <TopBar />
     <div className="w-full px-0 lg:px-10 pb-20 2xl:px-40 bg-bgColor lg:rounded-lg h-full ">
-      <TopBar />
+  
       <div className="w-full flex gap-2 lg:gap-4 pt-2 h-full ">
         <div>
           <div className="flex justify-center  bg-white h-full w-[76rem] mt-2">
@@ -149,6 +151,7 @@ const TasksList = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

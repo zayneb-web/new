@@ -1,17 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { user } from "../assets/data";
 
+
+
 const initialState = {
-  user: JSON.parse(window?.localStorage.getItem("user")) ?? user,
+  user: JSON.parse(window?.localStorage.getItem("user")) ?? {},
   edit: false,
+  users: [], // Add users array to store user data
 };
-//Ces méthodes décrivent comment l'état doit changer en réponse à une action spécifique.
+
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
     login(state, action) {
-      state.user = action.payload;   //met à jour la propriété user du state avec la valeur de action.payload qui est stockée dans le local storage.
+      state.user = action.payload;
       localStorage.setItem("user", JSON.stringify(action.payload));
     },
     logout(state) {
@@ -21,31 +24,36 @@ const userSlice = createSlice({
     updateProfile(state, action) {
       state.edit = action.payload;
     },
+    setUsers: (state, action) => {
+      state.users = action.payload;
+    },
   },
 });
 export default userSlice.reducer;
-//Ces fonctions sont des créateurs d'actions et utilisées pour déclencher des changements d'état dans votre application.
-export function UserLogin(user) {
-  return (dispatch, getState) => {
-    dispatch(userSlice.actions.login(user));
-  };
-}
 
-export function Logout() {
-  return (dispatch, getState) => {
-    dispatch(userSlice.actions.logout());
-  };
-}
+export const { login, logout, updateProfile, setUsers } = userSlice.actions; // Export actions directly
 
-export function UpdateProfile(val) {
-  return (dispatch, getState) => {
-    dispatch(userSlice.actions.updateProfile(val));
-  };
-}
+// Thunk actions can be created separately if needed
+export const UserLogin = (user) => (dispatch) => {
+  dispatch(login(user));
+};
+
+export const Logout = () => (dispatch) => {
+  dispatch(logout());
+};
+
+export const UpdateProfile = (val) => (dispatch) => {
+  dispatch(updateProfile(val));
+};
+
+export const SetUsers = (users) => (dispatch) => {
+  dispatch(setUsers(users));
+};
 
 //Sidebar function
 export function setOpenSidebar(open) {
   return (dispatch, getState) => {
     dispatch(userSlice.actions.setOpenSidebar(open));
   };
+
 };

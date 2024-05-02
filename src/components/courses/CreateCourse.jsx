@@ -75,25 +75,35 @@ const CreateCoursePage = () => {
   };
 
   return (
-    <div className="w-full px-0 lg:px-10 pb-20 2xl:px-40 bg-bgColor lg:rounded-lg h-full ">
-      <TopBar />
-      <div className="w-full flex gap-2 lg:gap-4 pt-2 h-full">
-        <div className="hidden bg-white w-1/3 lg:w-1/4 h-full md:flex flex-col gap-6 overflow-y-auto h-screen">
-          <Sidebar />
-        </div>
-        <div>
-          <div className="flex justify-center items-center  bg-gray-100">
-            <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w[1000px] ml-20">
-              <h2 className="text-2xl font-bold mb-4">Create Course</h2>
+    <>
+    <style>
+      {`
+      .sidebar {
+       
+        width: 20%; /* Adjust width as needed */
+       
+        padding: 10px; /* Add padding */
+      }
 
-              <div className="mb-4">
-                <img
-                  src="https://foundr.com/wp-content/uploads/2023/04/How-to-create-an-online-course.jpg.webp"
-                  alt="Course Image"
-                  className="rounded-lg w[250px] h-64 object-cover"
-                />
-              </div>
-              <form onSubmit={handleSubmit}>
+      `}
+    </style>
+      <TopBar />
+      <div className="flex">
+        
+        <div className='sidebar'><Sidebar /></div>
+        
+        <div className="flex justify-center items-center bg-white min-h-screen w-full">
+          <div className="w-full max-w-[700px] p-8 rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold mb-4 text-center">Create Course</h2>
+
+            <div className="mb-4 mx-auto max-w-md">
+              <img
+                src="https://foundr.com/wp-content/uploads/2023/04/How-to-create-an-online-course.jpg.webp"
+                alt="Course Image"
+                className="rounded-lg w-full h-auto max-h-64 object-cover"
+              />
+            </div>
+            <form onSubmit={handleSubmit}>
                 <div className="mb-4 flex items-center">
                   <MdTitle className="text-blue mr-2" />
                   <input
@@ -173,12 +183,13 @@ const CreateCoursePage = () => {
                 </div>
                 {message && <h3 className="text-blue">{message} </h3>}
                 {error && <h3 className="bg-[#D00000] ">{error}</h3>}
-              </form>
-            </div>
+                </form>
+            {message && <h3 className="text-blue">{message} </h3>}
+            {error && <h3 className="bg-red-500 text-white py-2 px-4 rounded">{error}</h3>}
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -10,6 +10,7 @@ import chatSlice  from "./chatSlice";
 import chapterSlice  from "./chapterSlice";
 
 
+
 const rootReducer = combineReducers({
   user: userSlice,
   theme: themeSlice,
@@ -17,7 +18,9 @@ const rootReducer = combineReducers({
 
   notifications:notificationsSlice,
 
+
   chapter: chapterSlice,
+
   event: eventSlice,
 
   chat: chatSlice,

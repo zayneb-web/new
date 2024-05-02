@@ -3,6 +3,8 @@ module.exports = {
   theme: {
     colors: {
       bgColor: "rgb(var(--color-bg) / 1)",
+      googleColor: "rgb(66, 133, 244, 0.8)",
+
       primary: "rgb(var(--color-primary) / 1)",
       secondary: "rgb(var(--color-secondary) / 1)",
       blue: "rgb(var(--color-blue) / 1)",

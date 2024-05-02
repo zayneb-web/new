@@ -1,38 +1,95 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { MdClose } from "react-icons/md";
-import { useDispatch, useSelector } from "react-redux";
-import TextInput from "./TextInput";
-import Loading from "./Loading";
-import CustomButton from "./CustomButton";
-import { UpdateProfile } from "../redux/userSlice";
+import React, { useState, useEffect, useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import { MdClose } from 'react-icons/md';
+import { useDispatch, useSelector } from 'react-redux';
+import TextInput from './TextInput';
+import Loading from './Loading';
+import CustomButton from './CustomButton';
+import { UpdateProfile, UserLogin } from '../redux/userSlice';
+import { apiRequest, handleFileUpload } from '../utils/api';
 
-const EditProfile = () => {
+const EditProfile = ({ onClose }) => {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const [errMsg, setErrMsg] = useState("");
+  const [errMsg, setErrMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [picture, setPicture] = useState(null);
+
+  const handleClose = () => {
+    dispatch(UpdateProfile(false));
+    onClose(); // Call onClose callback provided by the parent component
+  };
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    mode: "onChange",
+    mode: 'onChange',
     defaultValues: { ...user },
   });
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+    setErrMsg("")
+    try {
+      const uri = picture && (await handleFileUpload(picture));
+      const {firstName,lastName,location,profession} = data;
+      const res = await apiRequest({
+        url : "/users/update-user",
+        data: {
+          firstName,
+          lastName,
+          location,
+          profession,
+          profileUrl: uri ? uri : user?.profileUrl,
+        },
+        method: "PUT",
+        token: user?.token
+    });
+    if (res?.status === "failed"){
+      setErrMsg(res);
+    }else{
+      setErrMsg(res)
+      const newUser = {token: res?.token, ...res?.user};
+      dispatch(UserLogin(newUser));
+      
+      setTimeout(()=>{
+        dispatch(UpdateProfile(false));
+      },3000)
+    }
 
-  const onSubmit = async (data) => {};
+    setIsSubmitting(false);
 
-  const handleClose = () => {
-    dispatch(UpdateProfile(false));
+        } catch (error) {
+      console.log(error);
+      setIsSubmitting(false);
+    }
   };
+
+
   const handleSelect = (e) => {
     setPicture(e.target.files[0]);
   };
 
+
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (formRef.current && !formRef.current.contains(event.target)) {
+        handleClose(); 
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [handleClose]); // Include handleClose in the dependency array to ensure correct closure
+
   return (
+    
     <>
       <div className='fixed z-50 inset-0 overflow-y-auto'>
         <div className='flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0'>
@@ -42,6 +99,7 @@ const EditProfile = () => {
           <span className='hidden sm:inline-block sm:align-middle sm:h-screen'></span>
           &#8203;
           <div
+            ref={formRef}
             className='inline-block align-bottom bg-primary rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full'
             role='dialog'
             aria-modal='true'
@@ -69,10 +127,10 @@ const EditProfile = () => {
                 placeholder='First Name'
                 type='text'
                 styles='w-full'
-                register={register("firstName", {
-                  required: "First Name is required!",
+                register={register('firstName', {
+                  required: 'First Name is required!',
                 })}
-                error={errors.firstName ? errors.firstName?.message : ""}
+                error={errors.firstName ? errors.firstName?.message : ''}
               />
 
               <TextInput
@@ -80,33 +138,34 @@ const EditProfile = () => {
                 placeholder='Last Name'
                 type='lastName'
                 styles='w-full'
-                register={register("lastName", {
-                  required: "Last Name do no match",
+                register={register('lastName', {
+                  required: 'Last Name do no match',
                 })}
-                error={errors.lastName ? errors.lastName?.message : ""}
+                error={errors.lastName ? errors.lastName?.message : ''}
               />
 
-              <TextInput
-                name='profession'
-                label='Profession'
-                placeholder='Profession'
-                type='text'
-                styles='w-full'
-                register={register("profession", {
-                  required: "Profession is required!",
-                })}
-                error={errors.profession ? errors.profession?.message : ""}
-              />
+<TextInput
+  name='profession'
+  label='Profession'
+  placeholder='Profession'
+  type='text'
+  styles='w-full'
+  register={register('profession', {
+    required: 'Profession is required!',
+  })}
+  error={errors.profession ? errors.profession?.message : ''}
+/>
+
 
               <TextInput
                 label='Location'
                 placeholder='Location'
                 type='text'
                 styles='w-full'
-                register={register("location", {
-                  required: "Location do no match",
+                register={register('location', {
+                  required: 'Location do no match',
                 })}
-                error={errors.location ? errors.location?.message : ""}
+                error={errors.location ? errors.location?.message : ''}
               />
 
               <label
@@ -126,9 +185,9 @@ const EditProfile = () => {
                 <span
                   role='alert'
                   className={`text-sm ${
-                    errMsg?.status === "failed"
-                      ? "text-[#f64949fe]"
-                      : "text-[#2ba150fe]"
+                    errMsg?.status === 'failed'
+                      ? 'text-[#f64949fe]'
+                      : 'text-[#2ba150fe]'
                   } mt-0.5`}
                 >
                   {errMsg?.message}

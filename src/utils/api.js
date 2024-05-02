@@ -5,6 +5,22 @@ import { SetEvent } from '../redux/eventSlice';
 import { SetUsers } from '../redux/userSlice';
 
 
+import dayjs from "dayjs";
+
+export function getMonth(month = dayjs().month()) {
+  month = Math.floor(month);
+  const year = dayjs().year();
+  const firstDayOfTheMonth = dayjs(new Date(year, month, 1)).day();
+  let currentMonthCount = 0 - firstDayOfTheMonth;
+  const daysMatrix = new Array(5).fill([]).map(() => {
+    return new Array(7).fill(null).map(() => {
+      currentMonthCount++;
+      return dayjs(new Date(year, month, currentMonthCount));
+    });
+  });
+  return daysMatrix;
+}
+
 const API_URL = "http://localhost:5000";
 
 
@@ -31,6 +47,36 @@ export const apiRequest = async({url , token , data , method})=>{
         return {status: err.success, message : err.message}
     }
 }
+
+
+
+export const deleteChat = async (chatId, token) => {
+  try {
+    const res = await apiRequest({
+      url: `/chat/delete/${chatId}`,
+      method: "DELETE",
+      token: token,
+    });
+    return res;
+  } catch (error) {
+    console.error("Error deleting chat:", error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+};
+
+export const removeMessage = async (messageId, token) => {
+  try {
+    const res = await apiRequest({
+      url: `/message/${messageId}`,
+      method: "DELETE",
+      token: token,
+    });
+    return res;
+  } catch (error) {
+    console.error("Error removing message:", error);
+    throw error;
+  }
+};
 
 export const handleFileUpload = async (uploadFile,fileType) => {
 
@@ -118,6 +164,53 @@ export const deletePost=async(id,token)=>{
 
     }
 };
+export const updatePost = async (id, token, postData) => {
+  try {
+      const res = await apiRequest({
+          url: "/posts/" + id,
+          token: token,
+          method: "PUT",
+          data: postData,
+      });
+      return res;
+  } catch (error) {
+      console.error("An error occurred:", error);
+      console.log("Error details:", error.response);
+      // Gérer l'erreur ici selon vos besoins
+  }
+};
+     /////*******************Comments********************/////
+export const deleteComment = async (id, token) => {
+  try {
+      const res = await apiRequest({
+          url: "/posts/delete-comment/" + id,
+          token: token,
+          method: "DELETE",
+      });
+      return res;
+  } catch (error) {
+      console.error("An error occurred:", error);
+      console.log("Error details:", error.response);
+  }
+};
+export const updateComment = async (id, token, commentData) => {
+  try {
+    const res = await apiRequest({
+      url: "/posts/update-comment/" + id,
+      token: token,
+      method: "PUT",
+      data: commentData,
+    });
+    return res;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    if (error.response) {
+      console.log("Error response:", error.response.data);
+    }
+    throw error; // Rethrow the error to handle it in the calling function
+  }
+};
+
 export const getUserInfo = async(token, id) => {
 
     try {
@@ -288,6 +381,7 @@ export const deleteEvent = async (token, eventId, dispatch) => {
   } catch (error) {
     console.log('Error deleting event:', error);
     throw error; // Throw the error for handling in the component
+
   }
 };
 
@@ -398,7 +492,27 @@ export const fetchUsers = async (token) => {
 };
 
 
-export const createChat = (data, token) => apiRequest({ url: '/chat/', data, method: 'POST', token });
+
+
+//export const createChat = (data, token) => apiRequest({ url: '/chat/', data, method: 'POST', token });
+export const createChat = async (senderId, receiverId, token) => {
+  try {
+    const res = await apiRequest({
+      url: '/chat/create', // Define your endpoint for creating a chat
+      method: 'POST',
+      data: { senderId, receiverId }, // Send senderId and receiverId in the request body
+      token: token,
+    });
+    return res;
+  } catch (error) {
+    console.error('Error creating chat:', error);
+    throw error;
+  }
+};
+
+
+
+
 
 export const getUserChats = async (userId, token) => {
     try {
@@ -421,12 +535,16 @@ export const findChat = (firstId, secondId, token) =>
 
 
 
+
   export const resetPassword = async (token, email, newPassword) => {
+
     try {
       const res = await apiRequest({
         url: "/users/reset-password",
         method: "POST",
+
         data: { email, password: newPassword },
+
         token: token,
       });
       return res; // Assuming the response contains relevant information about success or failure
@@ -436,6 +554,7 @@ export const findChat = (firstId, secondId, token) =>
       return { status: "failed", message: "Failed to reset password. Please try again." };
     }
   };
+
 
   export const getUsers = async (token, dispatch) => {
     try {
@@ -467,6 +586,7 @@ export const findChat = (firstId, secondId, token) =>
     
     }
   }
+
   
   export const addChapterAction = (chapterData) => async (dispatch) => {
     try {
@@ -538,5 +658,96 @@ export const fetchChapters = async () => {
     return response.data; // Assuming the response contains the chapters data
   } catch (error) {
     throw new Error("Failed to fetch chapters"); // Throw an error if the request fails
+
+  // zeienb new : 
+  export const sharePost = async (postId, shareWithUserId) => {
+    try {
+      const res = await apiRequest({
+        url: "posts/share",
+        method: "POST",
+        data: {
+          postId: postId,
+          shareWith: shareWithUserId,
+        },
+      });
+      return res;
+    } catch (error) {
+      console.error("Error sharing post:", error);
+      throw error;
+    }
+  };
+  export const getSharedPosts = async (userId) => {
+    try {
+      const res = await apiRequest({
+        url:` /posts/get-shared-posts/${userId}`,
+        method: "GET",
+      });
+      return res;
+    } catch (error) {
+      console.error("Error getting shared posts:", error);
+      throw error;
+    }
+  };
+
+  
+export const updatePost = async (id, token, postData) => {
+  try {
+      const res = await apiRequest({
+          url: "/posts/" + id,
+          token: token,
+          method: "PUT",
+          data: postData,
+      });
+      return res;
+  } catch (error) {
+      console.error("An error occurred:", error);
+      console.log("Error details:", error.response);
+      // Gérer l'erreur ici selon vos besoins
+  }
+};
+     /////*******************Comments********************/////
+export const deleteComment = async (id, token) => {
+  try {
+      const res = await apiRequest({
+          url: "/posts/delete-comment/" + id,
+          token: token,
+          method: "DELETE",
+      });
+      return res;
+  } catch (error) {
+      console.error("An error occurred:", error);
+      console.log("Error details:", error.response);
+  }
+};
+export const updateComment = async (id, token, commentData) => {
+  try {
+    const res = await apiRequest({
+      url: "/posts/update-comment/" + id,
+      token: token,
+      method: "PUT",
+      data: commentData,
+    });
+    return res;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    if (error.response) {
+      console.log("Error response:", error.response.data);
+    }
+    throw error; // Rethrow the error to handle it in the calling function
+  }
+};
+//eya
+export const likeEvent = async (eventId, token) => {
+  try {
+    const res = await apiRequest({
+      url: `/event/likeevent/${eventId}`, 
+      method: "POST", 
+      token: token, 
+    });
+    return res; 
+  } catch (error) {
+    console.error("Error liking event:", error);
+    throw error; // Rethrow the error to be handled by the caller
+
   }
 };

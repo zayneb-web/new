@@ -11,6 +11,7 @@ const VideoPage = () => {
   }, [navigate, value]);
 
   return (
+
     <div
       className="flex flex-col items-center justify-center min-h-screen"
       style={{
@@ -20,6 +21,7 @@ const VideoPage = () => {
     >
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
         <h2 className="text-2xl font-semibold mb-4">Join a Meeting</h2>
+
         <input
           className="border border-gray-300 p-2 rounded-md mb-4 w-full"
           value={value}

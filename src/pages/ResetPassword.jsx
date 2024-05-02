@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import CustomButton from "../components/CustomButton";
 import Loading from "../components/Loading";
-import TextInput from "../components/TextInput";
+import TextInput from "../components/TextInput"
+import CustomButton from "../components/CustomButton"
 import { apiRequest } from "../utils/api";
+import { Link } from "react-router-dom";
 
 
 
@@ -90,12 +91,23 @@ const ResetPassword = () => {
 
           {isSubmitting ? (
             <Loading />
-          ) : (
-            <CustomButton
+          ) : (<>
+          
+          <CustomButton
               type='submit'
               containerStyles={`inline-flex justify-center rounded-md bg-blue px-8 py-3 text-sm font-medium text-white outline-none`}
               title='Submit'
-            />
+            /> 
+              <Link
+              to='/login'
+              className='text-sm text-right text-blue font-semibold'
+            >
+              ➜ Back to Login
+            </Link>
+          </>
+          
+
+            
           )}
         </form>
       </div>
