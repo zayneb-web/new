@@ -1,0 +1,60 @@
+.video-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Augmenter la hauteur du conteneur à 100% de la hauteur de la vue */
+  background-image: url('https://t3.ftcdn.net/jpg/03/91/11/54/360_F_391115452_OLlUSOU9tR6jijVWsc1gtl10ns7IIr6X.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
+
+.video-page-content {
+  background-color: #ffffff;
+  padding: 40px; /* Augmenter le padding */
+  border-radius: 8px;
+  text-align: center;
+}
+
+.room-code-input {
+  width: 100%;
+  padding: 15px; /* Augmenter le padding */
+  margin-bottom: 30px; /* Augmenter la marge */
+  border: 1px solid #ccc;
+  border-radius: 6px; /* Augmenter le rayon du bord */
+  font-size: 18px; /* Augmenter la taille de la police */
+}
+
+.join-button {
+  background-color: #D00000;
+  color: white;
+  border: none;
+  padding: 15px 25px; /* Augmenter le padding */
+  border-radius: 6px; /* Augmenter le rayon du bord */
+  font-size: 18px; /* Augmenter la taille de la police */
+  cursor: pointer;
+}
+.video-page-content h2 {
+  font-size: 24px; /* Augmenter la taille de la police pour le texte en gras */
+  margin-bottom: 20px; /* Ajouter une marge basse pour créer de l'espace */
+  font-weight: bold;
+}
+
+
+  
+  .join-button {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .join-button:hover {
+    background-color: #0f6bff;
+  }
+  
