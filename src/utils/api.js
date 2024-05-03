@@ -13,6 +13,7 @@ export const API= axios.create ({
     baseURL: API_URL,
     responseType: "json",
 })
+
 export const apiRequest = async({url , token , data , method})=>{
 
     try {
@@ -31,6 +32,11 @@ export const apiRequest = async({url , token , data , method})=>{
         return {status: err.success, message : err.message}
     }
 }
+export const newRequests = axios.create({
+  baseURL: "http://localhost:5000/api/",
+});
+
+
 
 export const handleFileUpload = async (uploadFile,fileType) => {
 
@@ -102,6 +108,35 @@ export const likePost = async({uri,token})=>{
     }
 };
 
+export const sharePost = async (postId, shareWithUserId) => {
+  try {
+    const res = await apiRequest({
+      url: "posts/share",
+      method: "POST",
+      data: {
+        postId: postId,
+        shareWith: shareWithUserId,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.error("Error sharing post:", error);
+    throw error;
+  }
+};
+
+export const getSharedPosts = async (userId) => {
+  try {
+    const res = await apiRequest({
+      url: `/posts/get-shared-posts/${userId}`,
+      method: "GET",
+    });
+    return res;
+  } catch (error) {
+    console.error("Error getting shared posts:", error);
+    throw error;
+  }
+};
 
 export const deletePost=async(id,token)=>{
     try {

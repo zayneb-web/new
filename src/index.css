@@ -3,12 +3,6 @@
 @tailwind utilities;
 
 
-::-webkit-scrollbar {
- 
-   -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;
-  
-}
 html {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;

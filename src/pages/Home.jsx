@@ -13,11 +13,12 @@ import TopBar from "../components/TopBar";
 import FriendsCard from "../components/FriendsCard";
 import PostCard from "../components/PostCard";
 import EditProfile from "../components/EditProfile";
-import { apiRequest, fetchPosts, handleFileUpload, sendFriendRequest ,getUserInfo, likePost, deletePost,updatePost,deleteComment,updateComment} from "../utils/api";
+import { apiRequest, fetchPosts, handleFileUpload, sendFriendRequest ,getUserInfo, likePost, deletePost,updatePost,deleteComment,updateComment,sharePost} from "../utils/api";
 import { UserLogin } from "../redux/userSlice";
 import {io} from 'socket.io-client';
 import { addNotification } from "../redux/notificationsSlice";
 import InputEmoji from "react-input-emoji";
+import axios from 'axios';
 
 
 //
@@ -168,28 +169,67 @@ const dispatch = useDispatch();
             console.log(error);
         }
     };
-    const fetchSuggestedFriends = async()=>{
-        try{
+
+    const fetchSuggestedFriends = async () => {
+        try {
+          const res = await axios.get('http://127.0.0.1:8000/cluster_users/');
+          const suggestedFriends = res.data;
+          setSuggestedFriends(suggestedFriends);
+
+          if (res?.data) {
+            const filteredSuggestions = filterSuggestedFriends(res?.data, user?.friends);
+            setSuggestedFriends(filteredSuggestions);
+        }
+          
+        } catch (error) {
+          console.error('Error fetching suggested friends:', error);
+        }
+      };
+    const fetchSuggestedFriends2 = async () => {
+        try {
             const res = await apiRequest({
-                url:"/users/suggested-friends",
+                url: "/users/suggested-friends",
                 token: user?.token,
-                method:"POST",
+                method: "POST",
             });
-            setSuggestedFriends(res?.data);
-        }catch(error){
+
+            if (res?.data) {
+                const filteredSuggestions = filterSuggestedFriends(res?.data, user?.friends);
+                setSuggestedFriends(filteredSuggestions);
+            }
+        } catch (error) {
             console.log(error);
         }
     };
-    const handleFriendRequest = async(friendId)=>{
-        try{
-            const res = await sendFriendRequest(user.token,friendId);
-            await fetchSuggestedFriends();
-            socketRef.current.emit('Send-friend-request', { userId: user._id, friendId });
 
-        console.log('Sent friend request to userId:', friendId);
-    } catch (error) {
-        console.log(error);
-    }}
+    const filterSuggestedFriends = (suggestions, userFriends) => {
+        if (!Array.isArray(suggestions)) {
+            console.error('Suggested friends is not an array:', suggestions);
+            return [];
+        }
+    
+        return suggestions.filter((friend) => {
+            // Check if the friend ID is not in the user's friends list
+            return !userFriends.some((userFriend) => userFriend._id === friend._id);
+        });
+    };
+    
+    const handleFriendRequest = async (friendId) => {
+        try {
+            const res = await sendFriendRequest(user.token, friendId);
+            await fetchSuggestedFriends(); // Met à jour la liste des amis suggérés
+            socketRef.current.emit('Send-friend-request', { userId: user._id, friendId });
+    
+            // Supprime l'ami de la liste des suggestions
+            setSuggestedFriends(suggestedFriends.filter((friend) => friend._id !== friendId));
+    
+            console.log('Sent friend request to userId:', friendId);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    
+    
     const acceptFriendRequest = async(id,status)=>{
         try{
             const res = await apiRequest({
@@ -211,6 +251,25 @@ const dispatch = useDispatch();
         dispatch(UserLogin(newData));
     };
 
+    const handleSharePost = async (postId, shareWithUserId) => {
+        try {
+          const res = await apiRequest({
+            url: "posts/share",
+            token: user.token,
+            method: 'POST',
+            data: {
+              postId: postId,
+              shareWith: shareWithUserId,
+            },
+          });
+          console.log('Post shared successfully:', res);
+          await fetchPosts(user?.token, dispatch);
+        } catch (error) {
+          console.error('Error sharing post:', error);
+          throw error;
+        }
+      };
+
 
     useEffect(()=>{
         setLoading(true);
@@ -230,9 +289,6 @@ const dispatch = useDispatch();
                     <div className='hidden w-1/3 lg:w-1/4 h-full md:flex flex-col gap-6 overflow-y-auto'>
                         <ProfileCard user={user} />
                         <FriendsCard friends={user?.friends} />
-                        <Link to="/dashboard/admin">
-          Go to Dashboard Admin
-        </Link>
                     </div>
 
                     {/* CENTER */}
@@ -349,6 +405,7 @@ const dispatch = useDispatch();
                                     updatePost={handleUpdatePost} 
                                     deleteComment={handleDeleteComment} 
                                     updateComment={handleUpdateComment} 
+                                    sharePost={handleSharePost}
                                 />
                             ))
                         ) : (
@@ -411,43 +468,45 @@ const dispatch = useDispatch();
                             <div className='flex items-center justify-between text-lg text-ascent-1 border-b border-[#66666645]'>
                                 <span>Friend Suggestion</span>
                             </div>
-                            <div className='w-full flex flex-col gap-4 pt-4'>
-                                {suggestedFriends?.map((friend) => (
-                                    <div
-                                        className='flex items-center justify-between'
-                                        key={friend._id}
-                                    >
-                                        <Link
-                                            to={"/profile/" + friend?._id}
-                                            key={friend?._id}
-                                            className='w-full flex gap-4 items-center cursor-pointer'
-                                        >
-                                            <img
-                                                src={friend?.profileUrl ?? NoProfile}
-                                                alt={friend?.firstName}
-                                                className='w-10 h-10 object-cover rounded-full'
-                                            />
-                                            <div className='flex-1 '>
-                                                <p className='text-base font-medium text-ascent-1'>
-                                                    {friend?.firstName} {friend?.lastName}
-                                                </p>
-                                                <span className='text-sm text-ascent-2'>
-                                                    {friend?.profession ?? "No Profession"}
-                                                </span>
-                                            </div>
-                                        </Link>
+                            {Array.isArray(suggestedFriends) && suggestedFriends.length > 0 ? (
+    <div className='w-full flex flex-col gap-4 pt-4'>
+        {suggestedFriends.map((friend) => (
+            <div className='flex items-center justify-between' key={friend._id}>
+                <Link
+                    to={"/profile/" + friend?._id}
+                    key={friend?._id}
+                    className='w-full flex gap-4 items-center cursor-pointer'
+                >
+                    <img
+                        src={friend?.profileUrl ?? NoProfile}
+                        alt={friend?.firstName}
+                        className='w-10 h-10 object-cover rounded-full'
+                    />
+                    <div className='flex-1'>
+                        <p className='text-base font-medium text-ascent-1'>
+                            {friend?.firstName} {friend?.lastName}
+                        </p>
+                        <span className='text-sm text-ascent-2'>
+                            {friend?.profession ?? "No Profession"}
+                        </span>
+                    </div>
+                </Link>
 
-                                        <div className='flex gap-1'>
-                                            <button
-                                                className='bg-[rgba(4,68,164,0.19)] text-sm text-white p-1 rounded'
-                                                onClick={() => {handleFriendRequest(friend?._id)}}
-                                            >
-                                                <BsPersonFillAdd size={20} className='text-[#D00000]' />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                <div className='flex gap-1'>
+                    <button
+                        className='bg-[rgba(4,68,164,0.19)] text-sm text-white p-1 rounded'
+                        onClick={() => { handleFriendRequest(friend?._id) }}
+                    >
+                        <BsPersonFillAdd size={20} className='text-[#D00000]' />
+                    </button>
+                </div>
+            </div>
+        ))}
+    </div>
+) : (
+    <p>No suggested friends available</p>
+)}
+
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,17 @@
+/* styles.css */
+.sidebar-forum {
+    /* Styles spécifiques pour SidebarForum */
+    /* Par exemple */
+    margin-bottom: 5px;
+    
+  }
+  
+  .create-button {
+    /* Styles spécifiques pour CreateButton */
+    /* Par exemple */
+    background-color: blue;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+  }
+  

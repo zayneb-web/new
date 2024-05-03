@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { rootReducer } from "./reducer";
 
+
 const store = configureStore({
     // "root reducer" fait référence au reducer principal qui combine plusieurs reducers individuels en un seul reducer global. 
   reducer: rootReducer,

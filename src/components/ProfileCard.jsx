@@ -21,6 +21,7 @@ const ProfileCard = ({ user }) => {
   const dispatch = useDispatch();
   const [showEditPost, setShowEditPost] = useState(false);
 
+  
   return (
     <div>
       <div className='w-full bg-primary flex flex-col items-center shadow-sm rounded-xl px-6 py-4 '>
@@ -78,10 +79,7 @@ const ProfileCard = ({ user }) => {
             {user?.friends?.length} Friends
           </p>
 
-          <div className='flex items-center justify-between'>
-            <span className='text-ascent-2'>Who viewed your profile</span>
-            <span className='text-ascent-1 text-lg'>{user?.views?.length}</span>
-          </div>
+          
 
           <span className='text-base text-blue'>
             {user?.verified ? "Verified Account" : "Not Verified"}
@@ -134,7 +132,12 @@ const ProfileCard = ({ user }) => {
           Tasks
           </Link>
           </div>
-
+          <div className='flex gap-2 items-center text-ascent-2'>
+          <span className='text-xl text-ascent-1'>Q/R</span>
+          <Link to="/forum" className='text-ascent-1'>
+          Forum
+          </Link>
+          </div>
           </div>
       </div>
     </div>
